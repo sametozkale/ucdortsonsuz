@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useTransform, type MotionValue } from "framer-motion";
-import { BookPage } from "@/components/reader/BookPage";
+import { ReaderPageContent } from "@/components/reader/ReaderPageContent";
 import type { ReaderPage } from "@/lib/book/types";
 import {
   computeStripRotateXDeg,
@@ -16,6 +16,7 @@ interface FlipPageStripProps {
   stripIndex: number;
   stripCount: number;
   page: ReaderPage;
+  coverImageUrl?: string | null;
   progress: MotionValue<number>;
   direction: FlipDirection;
 }
@@ -24,6 +25,7 @@ export function FlipPageStrip({
   stripIndex,
   stripCount,
   page,
+  coverImageUrl,
   progress,
   direction,
 }: FlipPageStripProps) {
@@ -85,7 +87,7 @@ export function FlipPageStrip({
         }}
       >
         <div className="flip-strip-slice h-full" style={sliceStyle}>
-          <BookPage page={page} />
+          <ReaderPageContent page={page} coverImageUrl={coverImageUrl} side="front" />
         </div>
         <motion.div
           className="pointer-events-none absolute inset-0"
@@ -117,7 +119,7 @@ export function FlipPageStrip({
         }}
       >
         <div className="flip-strip-slice h-full" style={sliceStyle}>
-          <BookPage page={page} side="back" />
+          <ReaderPageContent page={page} coverImageUrl={coverImageUrl} side="back" />
         </div>
       </div>
     </motion.div>
@@ -126,11 +128,17 @@ export function FlipPageStrip({
 
 interface FlipPageLeafProps {
   page: ReaderPage;
+  coverImageUrl?: string | null;
   progress: MotionValue<number>;
   direction: FlipDirection;
 }
 
-export function FlipPageLeaf({ page, progress, direction }: FlipPageLeafProps) {
+export function FlipPageLeaf({
+  page,
+  coverImageUrl,
+  progress,
+  direction,
+}: FlipPageLeafProps) {
   const count = FLIP_STRIP_COUNT;
 
   return (
@@ -144,6 +152,7 @@ export function FlipPageLeaf({ page, progress, direction }: FlipPageLeafProps) {
           stripIndex={i}
           stripCount={count}
           page={page}
+          coverImageUrl={coverImageUrl}
           progress={progress}
           direction={direction}
         />

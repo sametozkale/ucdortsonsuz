@@ -2,25 +2,23 @@
 
 import {
   Bookmark as BookmarkIcon,
-  BookmarkCheck,
   Home,
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { BookPage } from "@/components/reader/BookPage";
-import { BookPageFlip } from "@/components/reader/BookPageFlip";
-import { PageCurlZone } from "@/components/reader/PageCurlZone";
-import {
-  ReaderCornerAction,
-  ReaderCornerMeta,
-} from "@/components/reader/ReaderCornerAction";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import { ReaderPageIndicator } from "@/components/reader/ReaderPageIndicator";
 import { ReaderTocMenu } from "@/components/reader/ReaderTocMenu";
-import { LogoMark } from "@/components/brand/LogoMark";
+import {
+  TurnJsMagazine,
+  type TurnJsMagazineHandle,
+} from "@/components/reader/TurnJsMagazine";
 import type { Book, BookItem, Bookmark } from "@/lib/book/types";
 import {
   clearBookmark,
   loadBookmark,
+  markReaderSessionStarted,
   resolveBookmarkPageIndex,
   saveBookmark,
 } from "@/lib/reader/bookmark";
@@ -28,6 +26,7 @@ import {
   buildReaderPages,
   findPageIndexByItemId,
 } from "@/lib/reader/pagination";
+import { nextPageAfterVisible } from "@/lib/reader/turn-layout";
 
 interface BookReaderProps {
   book: Book;
@@ -35,17 +34,30 @@ interface BookReaderProps {
 }
 
 export function BookReader({ book, items }: BookReaderProps) {
-  const pages = useMemo(() => buildReaderPages(items), [items]);
+  const pages = useMemo(() => buildReaderPages(items, book), [items, book]);
+  const pagesKey = useMemo(
+    () =>
+      pages
+        .map((p) => `${p.itemId}:${p.pageIndex}:${p.globalPageIndex}`)
+        .join("|"),
+    [pages],
+  );
   const [index, setIndex] = useState(0);
-  const [flip, setFlip] = useState<{ from: number; to: number } | null>(null);
+  const [visibleIndices, setVisibleIndices] = useState<number[]>([0]);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
   const [bookmark, setBookmark] = useState<Bookmark | null>(null);
   const [bookmarkNotice, setBookmarkNotice] = useState<string | null>(null);
+  const [showResumeBanner, setShowResumeBanner] = useState(false);
+  const resumePromptCheckedRef = useRef(false);
+  const turnRef = useRef<TurnJsMagazineHandle>(null);
 
-  const displayIndex = flip?.to ?? index;
-  const currentPage = pages[displayIndex];
-  const settledPage = pages[index];
-  const isFlipping = flip !== null;
+  const currentPage = pages[index];
+
+  const nextContentTitle = useMemo(
+    () => nextPageAfterVisible(pages, visibleIndices),
+    [pages, visibleIndices],
+  );
 
   const bookmarkPageIndex = useMemo(() => {
     if (!bookmark) return null;
@@ -55,12 +67,21 @@ export function BookReader({ book, items }: BookReaderProps) {
   const isBookmarkedHere =
     bookmarkPageIndex !== null && bookmarkPageIndex === index;
 
-  const showResumeBanner =
-    bookmarkPageIndex !== null && bookmarkPageIndex !== index;
-
   useEffect(() => {
-    setBookmark(loadBookmark(book.id));
-  }, [book.id]);
+    if (resumePromptCheckedRef.current) return;
+    resumePromptCheckedRef.current = true;
+
+    const saved = loadBookmark(book.id);
+    setBookmark(saved);
+
+    const isNewReaderSession = markReaderSessionStarted(book.id);
+    if (!isNewReaderSession || !saved) return;
+
+    const savedPageIndex = resolveBookmarkPageIndex(pages, saved);
+    if (savedPageIndex !== null && savedPageIndex > 0) {
+      setShowResumeBanner(true);
+    }
+  }, [book.id, pages]);
 
   useEffect(() => {
     if (!bookmarkNotice) return;
@@ -70,22 +91,21 @@ export function BookReader({ book, items }: BookReaderProps) {
 
   const goTo = useCallback(
     (nextIndex: number) => {
-      if (nextIndex < 0 || nextIndex >= pages.length || flip) return;
-      if (nextIndex === index) return;
-      setFlip({ from: index, to: nextIndex });
+      if (nextIndex < 0 || nextIndex >= pages.length) return;
+      turnRef.current?.goTo(nextIndex);
     },
-    [flip, index, pages.length],
+    [pages.length],
   );
 
-  const onFlipComplete = useCallback(() => {
-    setFlip((active) => {
-      if (active) setIndex(active.to);
-      return null;
-    });
-  }, []);
+  const goNext = useCallback(() => {
+    if (index >= pages.length - 1 || isAnimating) return;
+    turnRef.current?.next();
+  }, [index, isAnimating, pages.length]);
 
-  const goNext = useCallback(() => goTo(index + 1), [goTo, index]);
-  const goPrev = useCallback(() => goTo(index - 1), [goTo, index]);
+  const goPrev = useCallback(() => {
+    if (index <= 0 || isAnimating) return;
+    turnRef.current?.previous();
+  }, [index, isAnimating]);
 
   const goToItem = useCallback(
     (itemId: string) => {
@@ -96,11 +116,11 @@ export function BookReader({ book, items }: BookReaderProps) {
   );
 
   const setBookmarkHere = useCallback(() => {
-    if (!settledPage || isFlipping) return;
+    if (!currentPage || isAnimating) return;
     const next: Bookmark = {
       bookId: book.id,
-      itemId: settledPage.itemId,
-      pageIndex: settledPage.pageIndex,
+      itemId: currentPage.itemId,
+      pageIndex: currentPage.pageIndex,
       globalPageIndex: index,
       updatedAt: new Date().toISOString(),
     };
@@ -111,18 +131,23 @@ export function BookReader({ book, items }: BookReaderProps) {
     } catch {
       setBookmarkNotice("Ayraç kaydedilemedi");
     }
-  }, [book.id, index, isFlipping, settledPage]);
-
-  const resumeBookmark = useCallback(() => {
-    if (bookmarkPageIndex === null) return;
-    goTo(bookmarkPageIndex);
-  }, [bookmarkPageIndex, goTo]);
+  }, [book.id, currentPage, index, isAnimating]);
 
   const removeBookmark = useCallback(() => {
     clearBookmark(book.id);
     setBookmark(null);
     setBookmarkNotice(null);
   }, [book.id]);
+
+  const resumeBookmark = useCallback(() => {
+    if (bookmarkPageIndex === null) return;
+    setShowResumeBanner(false);
+    goTo(bookmarkPageIndex);
+  }, [bookmarkPageIndex, goTo]);
+
+  const dismissResumeBanner = useCallback(() => {
+    setShowResumeBanner(false);
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -138,28 +163,6 @@ export function BookReader({ book, items }: BookReaderProps) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [goNext, goPrev]);
 
-  useEffect(() => {
-    let touchStartX = 0;
-    const onTouchStart: EventListener = (ev) => {
-      touchStartX = (ev as TouchEvent).touches[0]?.clientX ?? 0;
-    };
-    const onTouchEnd: EventListener = (ev) => {
-      const diff =
-        touchStartX - ((ev as TouchEvent).changedTouches[0]?.clientX ?? 0);
-      if (Math.abs(diff) > 50) {
-        if (diff > 0) goNext();
-        else goPrev();
-      }
-    };
-    const el = document.querySelector(".book-stage");
-    el?.addEventListener("touchstart", onTouchStart, { passive: true });
-    el?.addEventListener("touchend", onTouchEnd, { passive: true });
-    return () => {
-      el?.removeEventListener("touchstart", onTouchStart);
-      el?.removeEventListener("touchend", onTouchEnd);
-    };
-  }, [goNext, goPrev]);
-
   if (!currentPage) {
     return (
       <p className="p-8 text-center text-stone-500">Okunacak içerik bulunamadı.</p>
@@ -168,31 +171,40 @@ export function BookReader({ book, items }: BookReaderProps) {
 
   return (
     <div className="reader-canvas relative min-h-dvh w-full">
-      <Link
-        href="/"
-        aria-label="Ana sayfaya dön"
-        className="reader-corner-btn absolute left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:left-6 sm:top-6 sm:h-11 sm:w-11"
-      >
-        <Home className="h-5 w-5" strokeWidth={1.5} />
-      </Link>
+      <header className="reader-top-bar absolute inset-x-0 top-4 z-50 px-4 sm:top-6 sm:px-6">
+        <div className="relative flex h-10 items-center sm:h-11">
+          <Link
+            href="/"
+            aria-label="Ana sayfaya dön"
+            className="reader-corner-btn relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:h-11 sm:w-11"
+          >
+            <Home className="h-5 w-5" strokeWidth={1.5} />
+          </Link>
 
-      <ReaderCornerAction
-        corner="top-right"
-        label={isBookmarkedHere ? "Ayraç kaldır" : "Ayraç koy"}
-        onClick={isBookmarkedHere ? removeBookmark : setBookmarkHere}
-        disabled={isFlipping}
-        className={
-          isBookmarkedHere
-            ? "text-ink hover:bg-surface-muted"
-            : undefined
-        }
-      >
-        {isBookmarkedHere ? (
-          <BookmarkCheck className="h-5 w-5" strokeWidth={1.5} />
-        ) : (
-          <BookmarkIcon className="h-5 w-5" strokeWidth={1.5} />
-        )}
-      </ReaderCornerAction>
+          <h1 className="reader-header-title pointer-events-none absolute inset-x-12 top-0 bottom-0 flex items-center justify-center truncate text-center font-sans text-xs font-medium leading-none text-reader-title sm:inset-x-14 sm:text-sm">
+            {book.title}
+          </h1>
+
+          <button
+            type="button"
+            aria-label={isBookmarkedHere ? "Ayraç kaldır" : "Ayraç koy"}
+            onClick={isBookmarkedHere ? removeBookmark : setBookmarkHere}
+            disabled={isAnimating}
+            className={cn(
+              "reader-corner-btn relative z-10 ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:h-11 sm:w-11",
+              isBookmarkedHere && "text-ink hover:bg-surface-muted",
+            )}
+          >
+            <BookmarkIcon
+              className={cn(
+                "h-5 w-5",
+                isBookmarkedHere && "fill-current text-ink",
+              )}
+              strokeWidth={1.5}
+            />
+          </button>
+        </div>
+      </header>
 
       {bookmarkNotice && (
         <div
@@ -206,38 +218,37 @@ export function BookReader({ book, items }: BookReaderProps) {
       <ReaderTocMenu
         items={items}
         currentItemId={currentPage.itemId}
+        isOnCover={currentPage.isCover === true}
+        sectionTitle={currentPage.sectionTitle}
         open={tocOpen}
         onOpenChange={setTocOpen}
         onSelect={goToItem}
+        onSelectCover={() => goTo(0)}
       />
 
-      <ReaderCornerAction
-        corner="bottom-right"
-        label="Sonraki sayfa"
-        onClick={goNext}
-        className={
-          index >= pages.length - 1 || isFlipping ? "opacity-40" : undefined
-        }
-        disabled={isFlipping}
-      >
-        <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
-      </ReaderCornerAction>
-
-      <ReaderCornerMeta corner="bottom-left">
-        <LogoMark size="sm" className="text-stone-500" />
-        <span className="mt-1.5 block text-stone-400">
-          {currentPage.sectionTitle}
-        </span>
-      </ReaderCornerMeta>
-
-      <ReaderCornerMeta corner="bottom-right">
-        <span className="tabular-nums text-stone-600">
-          {displayIndex + 1} / {pages.length}
-        </span>
-        <span className="mt-0.5 block truncate text-stone-400">
-          {currentPage.itemTitle}
-        </span>
-      </ReaderCornerMeta>
+      <div className="absolute bottom-4 right-4 z-50 flex max-w-[min(52vw,20rem)] flex-row-reverse items-center gap-3 text-right sm:bottom-6 sm:right-6">
+        <button
+          type="button"
+          onClick={goNext}
+          disabled={isAnimating || index >= pages.length - 1}
+          aria-label={
+            nextContentTitle
+              ? `Sonraki: ${nextContentTitle}`
+              : "Sonraki sayfa yok"
+          }
+          className={cn(
+            "reader-corner-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:h-11 sm:w-11",
+            (index >= pages.length - 1 || isAnimating) && "opacity-40",
+          )}
+        >
+          <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
+        </button>
+        {nextContentTitle && (
+          <span className="pointer-events-none min-w-0 truncate text-xs text-reader-body sm:text-sm">
+            {nextContentTitle}
+          </span>
+        )}
+      </div>
 
       {showResumeBanner && bookmark && (
         <div className="absolute left-1/2 top-16 z-[60] flex -translate-x-1/2 items-center gap-3 rounded-full border border-border bg-bg/95 px-4 py-2 text-sm text-ink-secondary shadow-[var(--shadow-sm)] backdrop-blur-sm">
@@ -250,51 +261,40 @@ export function BookReader({ book, items }: BookReaderProps) {
           </button>
           <button
             type="button"
-            onClick={removeBookmark}
+            onClick={dismissResumeBanner}
             className="text-stone-400 hover:text-stone-600"
-            aria-label="Ayraçı kaldır"
+            aria-label="Kapat"
           >
             ×
           </button>
         </div>
       )}
 
-      <div className="book-stage flex min-h-dvh items-center justify-center px-16 py-20 sm:px-24">
-        <div
-          className="book-container relative w-full max-w-md sm:max-w-lg"
-          style={{ perspective: 3200, perspectiveOrigin: "50% 40%" }}
-        >
-          <div
-            className={`book-pages relative rounded-[var(--radius-lg)] bg-surface shadow-[var(--shadow-md)] ring-1 ring-border ${isFlipping ? "overflow-visible" : "overflow-hidden"}`}
-            style={{ transformStyle: "preserve-3d" }}
-          >
-            {flip ? (
-              <BookPageFlip
-                key={`${flip.from}-${flip.to}`}
-                fromPage={pages[flip.from]!}
-                toPage={pages[flip.to]!}
-                direction={flip.to > flip.from ? 1 : -1}
-                onComplete={onFlipComplete}
-              />
-            ) : (
-              <div className="book-flip-static absolute inset-0 h-full w-full">
-                <BookPage page={currentPage} />
-              </div>
-            )}
-
-            <PageCurlZone
-              side="left"
-              disabled={index === 0 || isFlipping}
-              onActivate={goPrev}
-            />
-            <PageCurlZone
-              side="right"
-              disabled={index >= pages.length - 1 || isFlipping}
-              onActivate={goNext}
-            />
-          </div>
-        </div>
+      <div className="book-stage flex min-h-dvh w-full items-center justify-center px-6 py-16 sm:px-12 sm:py-20">
+        <TurnJsMagazine
+          key={pagesKey}
+          ref={turnRef}
+          pages={pages}
+          pageIndex={index}
+          bookTitle={book.title}
+          coverImageUrl={book.cover_image_url}
+          onPageChange={setIndex}
+          onVisibleIndicesChange={setVisibleIndices}
+          onAnimatingChange={setIsAnimating}
+          onTocSelectItem={goToItem}
+          interactionDisabled={isAnimating}
+        />
       </div>
+
+      <ReaderPageIndicator
+        current={index + 1}
+        total={pages.length}
+        onPrev={goPrev}
+        onNext={goNext}
+        canGoPrev={index > 0}
+        canGoNext={index < pages.length - 1}
+        disabled={isAnimating}
+      />
     </div>
   );
 }

@@ -10,7 +10,7 @@ import {
 } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { FlipPageLeaf } from "@/components/reader/FlipPageStrip";
-import { BookPage } from "@/components/reader/BookPage";
+import { ReaderPageContent } from "@/components/reader/ReaderPageContent";
 import type { ReaderPage } from "@/lib/book/types";
 import {
   computeFlipLighting,
@@ -23,6 +23,7 @@ interface BookPageFlipProps {
   fromPage: ReaderPage;
   toPage: ReaderPage;
   direction: number;
+  coverImageUrl?: string | null;
   onComplete: () => void;
 }
 
@@ -30,6 +31,7 @@ export function BookPageFlip({
   fromPage,
   toPage,
   direction,
+  coverImageUrl,
   onComplete,
 }: BookPageFlipProps) {
   const reducedMotion = useReducedMotion();
@@ -85,7 +87,7 @@ export function BookPageFlip({
   if (reducedMotion) {
     return (
       <div className="book-flip-static absolute inset-0 h-full w-full">
-        <BookPage page={toPage} />
+        <ReaderPageContent page={toPage} coverImageUrl={coverImageUrl} />
       </div>
     );
   }
@@ -103,7 +105,7 @@ export function BookPageFlip({
         className="book-flip-under absolute inset-0 z-0 overflow-hidden rounded-[var(--radius-lg)]"
         style={{ filter: underBrightness }}
       >
-        <BookPage page={underPage} />
+        <ReaderPageContent page={underPage} coverImageUrl={coverImageUrl} />
         <motion.div
           className="book-flip-spine pointer-events-none absolute inset-y-0 left-0 z-[1] w-[20%]"
           style={{ opacity: spineShade }}
@@ -142,6 +144,7 @@ export function BookPageFlip({
       <div className="flip-leaf-wrap absolute inset-0 z-[2] overflow-visible rounded-[var(--radius-lg)]">
         <FlipPageLeaf
           page={leafPage}
+          coverImageUrl={coverImageUrl}
           progress={progress}
           direction={flipDirection}
         />

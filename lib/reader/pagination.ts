@@ -1,4 +1,15 @@
-import type { BookItem, ReaderPage } from "@/lib/book/types";
+import type {
+  Book,
+  BookItem,
+  ReaderPage,
+  TocPageContent,
+} from "@/lib/book/types";
+import { paginateTocItem } from "@/lib/reader/toc-pagination";
+
+interface PaginatedSlice {
+  content: string;
+  tocSlice?: TocPageContent;
+}
 
 /** Tek kitap sayfasına sığacak yaklaşık karakter (sabit sayfa yüksekliği için) */
 const CHARS_PER_PAGE = 380;
@@ -49,18 +60,74 @@ function paginateParagraphs(paragraphs: string[], charsPerPage: number): string[
   return pages.length ? pages : [""];
 }
 
-export function buildReaderPages(items: BookItem[]): ReaderPage[] {
+function paginateWithBreaks(body: string, breaks: number[]): string[] {
+  const sorted = [...breaks].sort((a, b) => a - b);
+  const pages: string[] = [];
+  let start = 0;
+
+  for (const end of sorted) {
+    const slice = body.slice(start, end).trim();
+    if (slice) pages.push(slice);
+    start = end;
+  }
+
+  const tail = body.slice(start).trim();
+  if (tail) pages.push(tail);
+
+  return pages.length ? pages : [body.trim() || ""];
+}
+
+function paginateItemBody(item: BookItem, allItems: BookItem[]): PaginatedSlice[] {
+  if (item.slug === "icindekiler") {
+    return paginateTocItem(item, allItems);
+  }
+
+  const body = item.body_md ?? "";
+  if (!body.trim()) return [{ content: "" }];
+
+  let chunks: string[];
+  if (item.page_breaks?.length) {
+    const valid = item.page_breaks.filter(
+      (n) => Number.isFinite(n) && n > 0 && n < body.length,
+    );
+    chunks = valid.length ? paginateWithBreaks(body, valid) : [body.trim()];
+  } else {
+    const paragraphs = splitIntoParagraphs(body);
+    chunks = paginateParagraphs(paragraphs, CHARS_PER_PAGE);
+  }
+
+  return chunks.map((content) => ({ content }));
+}
+
+export function buildReaderPages(
+  items: BookItem[],
+  book?: Pick<Book, "title" | "author_name" | "cover_image_url">,
+): ReaderPage[] {
   const pages: ReaderPage[] = [];
   let globalIndex = 0;
 
+  if (book) {
+    pages.push({
+      itemId: "book-cover",
+      itemTitle: book.title,
+      itemKind: "page",
+      itemSlug: "kapak",
+      sectionTitle: "Kapak",
+      sectionType: "front_matter",
+      pageIndex: 0,
+      totalPagesInItem: 1,
+      globalPageIndex: globalIndex++,
+      content: book.author_name,
+      isCover: true,
+    });
+  }
+
   for (const item of items) {
-    const body = item.body_md ?? "";
-    const paragraphs = splitIntoParagraphs(body);
-    const contentPages = paginateParagraphs(paragraphs, CHARS_PER_PAGE);
+    const contentPages = paginateItemBody(item, items);
     const sectionTitle = item.section?.title ?? "";
     const sectionType = item.section?.type ?? "front_matter";
 
-    contentPages.forEach((content, pageIndex) => {
+    contentPages.forEach(({ content, tocSlice }, pageIndex) => {
       pages.push({
         itemId: item.id,
         itemTitle: item.title,
@@ -72,6 +139,7 @@ export function buildReaderPages(items: BookItem[]): ReaderPage[] {
         totalPagesInItem: contentPages.length,
         globalPageIndex: globalIndex++,
         content,
+        tocSlice,
       });
     });
   }

@@ -1,5 +1,8 @@
+import { ESSAY_TITLES, POEM_TITLES } from "@/lib/book/catalog";
+import { getPoemBody } from "@/lib/book/poem-bodies";
 import {
   AUTHOR_NAME,
+  BOOK_COVER_BG_URL,
   BOOK_DESCRIPTION,
   BOOK_SLUG,
   BOOK_TITLE,
@@ -7,6 +10,7 @@ import {
   POEM_COUNT,
 } from "@/lib/constants";
 import type { Book, BookItem, BookSection } from "@/lib/book/types";
+import { slugifyTurkish } from "@/lib/utils";
 
 const BOOK_ID = "00000000-0000-4000-8000-000000000001";
 
@@ -16,7 +20,7 @@ export const MOCK_BOOK: Book = {
   author_name: AUTHOR_NAME,
   slug: BOOK_SLUG,
   description: BOOK_DESCRIPTION,
-  cover_image_url: null,
+  cover_image_url: BOOK_COVER_BG_URL,
 };
 
 export const MOCK_SECTIONS: BookSection[] = [
@@ -66,39 +70,6 @@ const STORY = `**Üç Dört Sonsuz**'un doğuşu, bir defterin ortasından başl
 Yıllar süren notlar, gece yarısı yazılmış cümleler ve hiç gönderilmemiş mektuplar — hepsi bu kitapta bir araya geldi. Şiirler duygunun dilini, denemeler ise düşüncenin izini süer.
 
 Samet Özkale, bu metinlerde hem kişisel hem evrensel bir ses arar: kayıp, bellek, şehir, aile ve kelimelerin kendisi.`;
-
-const ZEYTIN_AGACI = `Zeytin dallarının karmaşasıyım ben
-
-Yeşilin hakimiyeti kahverenginin mağduriyetiyim
-
-Fikirlerim köklerim ve ben köklerimin sahibiyim
-
-Biçimim, biçemim ve asaletim
-
-Yağan yağmurlar oldu sırdaşım
-
-Ben, bu dünyada kayda geçmez vilayetim
-
-Sen, gönlünü benden esirgemeyen toprağım
-
-Ben senin sonu olmayan hikayenim
-
-Ve yine ben, zeytin ağacı
-
-Tek bir zeytinde olsa verebilmek için
-
-Seni günlerce bekledim…`;
-
-function poemBody(n: number): string {
-  return `Gecenin ortasında uyandım,
-sayılar pencereden içeri girdi.
-
-${n}. şiir bu kitabın
-sessiz haritasında bir durak.
-
-Bir satır daha — ve kapanır
-kapılar ardında kalan ışık.`;
-}
 
 function essayBody(n: number): string {
   return `Deneme ${n}: Kelimelerin gölgesinde
@@ -153,7 +124,18 @@ function buildMockItems(): BookItem[] {
     title: "İçindekiler",
     slug: "icindekiler",
     excerpt: "Kitaptaki tüm bölüm ve metinlerin listesi.",
-    body_md: `**İçindekiler**\n\nÖnsöz\nKitabın Hikayesi\n\n**Şiirler** (${POEM_COUNT})\n**Denemeler** (${ESSAY_COUNT})`,
+    body_md: [
+      "**İçindekiler**",
+      "",
+      "Önsöz",
+      "Kitabın Hikayesi",
+      "",
+      `**Şiirler** (${POEM_COUNT})`,
+      ...POEM_TITLES.map((t) => `- ${t}`),
+      "",
+      `**Denemeler** (${ESSAY_COUNT})`,
+      ...ESSAY_TITLES.map((t) => `- ${t}`),
+    ].join("\n"),
     sort_order: order++,
     is_sample: false,
     is_public_seo: true,
@@ -161,38 +143,70 @@ function buildMockItems(): BookItem[] {
     section: MOCK_SECTIONS[2],
   });
 
-  for (let i = 1; i <= POEM_COUNT; i++) {
-    const isZeytinAgaci = i === 1;
-    const slug = isZeytinAgaci ? "zeytin-agaci" : `siir-${i}`;
+  if (POEM_TITLES.length !== POEM_COUNT) {
+    throw new Error(
+      `POEM_TITLES (${POEM_TITLES.length}) POEM_COUNT (${POEM_COUNT}) ile eşleşmiyor`,
+    );
+  }
+
+  const usedPoemSlugs = new Set<string>();
+
+  POEM_TITLES.forEach((title, index) => {
+    const i = index + 1;
+    let slug = slugifyTurkish(title);
+    if (usedPoemSlugs.has(slug)) {
+      slug = `${slug}-${i}`;
+    }
+    usedPoemSlugs.add(slug);
+
+    const body = getPoemBody(slug);
+    if (!body) {
+      throw new Error(`Şiir metni eksik: ${title} (${slug})`);
+    }
     items.push({
       id: `item-poem-${i}`,
       book_id: BOOK_ID,
       section_id: "sec-poems",
       kind: "poem",
-      title: isZeytinAgaci ? "Zeytin Ağacı" : `Şiir ${i}`,
+      title,
       slug,
-      excerpt: isZeytinAgaci
-        ? "Zeytin ağacı, toprak ve kökler üzerine bir şiir."
-        : `Üç Dört Sonsuz kitabının ${i}. şiiri — duygu, bellek ve dil üzerine.`,
-      body_md: isZeytinAgaci ? ZEYTIN_AGACI : poemBody(i),
+      excerpt:
+        slug === "zeytin-agaci"
+          ? "Zeytin ağacı, toprak ve kökler üzerine bir şiir."
+          : `${title} — Üç Dört Sonsuz kitabından bir şiir.`,
+      body_md: body,
       sort_order: order++,
       is_sample: i <= 3,
       is_public_seo: true,
       page_breaks: null,
       section: MOCK_SECTIONS[3],
     });
+  });
+
+  if (ESSAY_TITLES.length !== ESSAY_COUNT) {
+    throw new Error(
+      `ESSAY_TITLES (${ESSAY_TITLES.length}) ESSAY_COUNT (${ESSAY_COUNT}) ile eşleşmiyor`,
+    );
   }
 
-  for (let i = 1; i <= ESSAY_COUNT; i++) {
-    const slug = `deneme-${i}`;
+  const usedEssaySlugs = new Set<string>();
+
+  ESSAY_TITLES.forEach((title, index) => {
+    const i = index + 1;
+    let slug = slugifyTurkish(title);
+    if (usedEssaySlugs.has(slug)) {
+      slug = `${slug}-${i}`;
+    }
+    usedEssaySlugs.add(slug);
+
     items.push({
       id: `item-essay-${i}`,
       book_id: BOOK_ID,
       section_id: "sec-essays",
       kind: "essay",
-      title: `Deneme ${i}`,
+      title,
       slug,
-      excerpt: `Samet Özkale'nin ${i}. denemesi — düşünce, bellek ve yazının izinde.`,
+      excerpt: `${title} — Üç Dört Sonsuz kitabından bir deneme.`,
       body_md: essayBody(i),
       sort_order: order++,
       is_sample: i === 1,
@@ -200,7 +214,7 @@ function buildMockItems(): BookItem[] {
       page_breaks: null,
       section: MOCK_SECTIONS[4],
     });
-  }
+  });
 
   return items;
 }

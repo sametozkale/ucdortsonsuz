@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Container } from "@/components/layout/Container";
 import { getBook } from "@/lib/book/queries";
 import { hasBookEntitlement, isReaderDevBypass } from "@/lib/auth/entitlement";
 import { BOOK_TITLE } from "@/lib/constants";
@@ -24,20 +25,23 @@ export default async function IndirPage() {
 
   if (!entitled) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="font-serif text-2xl text-stone-900">Erişim gerekli</h1>
-        <p className="mt-4 text-stone-600">
-          İndirme bağlantıları satın alma sonrası açılır.
-        </p>
-        <Link href="/satin-al" className="mt-6 inline-block underline">
-          Satın al →
-        </Link>
+      <div className="site-section">
+        <Container className="py-12 text-center sm:py-16">
+          <h1 className="font-serif text-2xl text-stone-900">Erişim gerekli</h1>
+          <p className="mt-4 text-stone-600">
+            İndirme bağlantıları satın alma sonrası açılır.
+          </p>
+          <Link href="/satin-al" className="mt-6 inline-block underline">
+            Satın al →
+          </Link>
+        </Container>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
+    <div className="site-section">
+      <Container>
       <h1 className="font-serif text-3xl font-semibold text-stone-900">
         E-kitap indir
       </h1>
@@ -61,6 +65,7 @@ export default async function IndirPage() {
           ← Okuyucuya dön
         </Link>
       </p>
+      </Container>
     </div>
   );
 }

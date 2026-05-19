@@ -9,3 +9,8 @@ export const SITE_URL =
 export const POEM_COUNT = 45;
 export const ESSAY_COUNT = 11;
 export const BOOKMARK_STORAGE_KEY = "ucdortsonsuz:bookmark";
+
+/** Kapak arka planı — Tiago Ferreira / Unsplash */
+export const BOOK_COVER_BG_URL = "/images/book-cover-bg.jpg";
+export const BOOK_COVER_BG_ALT =
+  "Zeytin dalları, berrak mavi gökyüzüne karşı";

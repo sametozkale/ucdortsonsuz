@@ -1,3 +1,4 @@
+import { Container } from "@/components/layout/Container";
 import { BookReader } from "@/components/reader/BookReader";
 import { getBook, getItemsForReader } from "@/lib/book/queries";
 import { hasBookEntitlement, isReaderDevBypass } from "@/lib/auth/entitlement";
@@ -17,7 +18,8 @@ export default async function OkuPage() {
 
   if (!entitled && !isReaderDevBypass()) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-20 text-center">
+      <div className="site-section">
+        <Container className="py-12 text-center sm:py-16">
         <h1 className="font-serif text-2xl text-stone-900">Erişim gerekli</h1>
         <p className="mt-4 text-stone-600">
           Bu bölüm yalnızca kitabı satın alan okurlara açıktır.
@@ -28,6 +30,7 @@ export default async function OkuPage() {
         >
           Satın al →
         </Link>
+        </Container>
       </div>
     );
   }

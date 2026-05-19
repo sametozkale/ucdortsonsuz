@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Container } from "@/components/layout/Container";
 import { BOOK_TITLE } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo/metadata";
 
@@ -16,7 +17,8 @@ export default async function SatinAlPage({
   const params = await searchParams;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
+    <div className="site-section">
+      <Container>
       <h1 className="font-serif text-4xl font-semibold text-stone-900">
         {BOOK_TITLE}
       </h1>
@@ -41,7 +43,7 @@ export default async function SatinAlPage({
         </ul>
         <Link
           href={params.redirect ?? "/oku"}
-          className="mt-8 inline-flex h-11 items-center justify-center rounded-md bg-stone-800 px-5 text-sm font-medium text-stone-50 hover:bg-stone-700"
+          className="btn-primary mt-8"
         >
           Okuyucuya git (geliştirme)
         </Link>
@@ -56,6 +58,7 @@ export default async function SatinAlPage({
           info@ucdortsonsuz.com
         </a>
       </p>
+      </Container>
     </div>
   );
 }

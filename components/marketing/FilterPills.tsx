@@ -15,7 +15,7 @@ export function FilterPills({ items }: { items: FilterPillItem[] }) {
           key={item.href + item.label}
           href={item.href}
           className={cn(
-            "filter-pill focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]",
+            "filter-pill focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]",
             item.active && "filter-pill--active",
           )}
         >

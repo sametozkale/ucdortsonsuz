@@ -89,7 +89,7 @@ export function SheetContent({
           <button
             type="button"
             onClick={() => ctx.setOpen(false)}
-            className="rounded-md p-2 text-stone-600 hover:bg-stone-200 focus-visible:ring-2 focus-visible:ring-stone-800"
+            className="rounded-full p-2 text-stone-600 hover:bg-stone-200 focus-visible:ring-2 focus-visible:ring-stone-800"
             aria-label="Kapat"
           >
             <X className="h-5 w-5" />

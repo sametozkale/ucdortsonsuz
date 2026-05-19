@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Container } from "@/components/layout/Container";
 import { Prose } from "@/components/marketing/Prose";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getItemBySlug, getEssaySlugs } from "@/lib/book/queries";
@@ -45,7 +46,8 @@ export default async function DenemePage({ params }: Props) {
           { name: item.title, path },
         ])}
       />
-      <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
+      <article className="site-section">
+        <Container>
         <header>
           <p className="text-sm text-stone-500">
             <Link href="/kitap" className="hover:underline">
@@ -87,6 +89,7 @@ export default async function DenemePage({ params }: Props) {
             </Link>
           </p>
         )}
+        </Container>
       </article>
     </>
   );

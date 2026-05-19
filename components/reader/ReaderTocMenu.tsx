@@ -1,26 +1,33 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { List, X } from "lucide-react";
-import { useCallback, useEffect, useRef } from "react";
+import { ListTree, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ReaderTOC } from "@/components/reader/ReaderTOC";
+import { ESSAY_COUNT, POEM_COUNT } from "@/lib/constants";
 import type { BookItem } from "@/lib/book/types";
 import { cn } from "@/lib/utils";
 
 interface ReaderTocMenuProps {
   items: BookItem[];
   currentItemId: string;
+  isOnCover: boolean;
+  sectionTitle: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (itemId: string) => void;
+  onSelectCover: () => void;
 }
 
 export function ReaderTocMenu({
   items,
   currentItemId,
+  isOnCover,
+  sectionTitle,
   open,
   onOpenChange,
   onSelect,
+  onSelectCover,
 }: ReaderTocMenuProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -32,6 +39,11 @@ export function ReaderTocMenu({
       close();
     },
     [onSelect, close],
+  );
+
+  const summary = useMemo(
+    () => `${POEM_COUNT} şiir · ${ESSAY_COUNT} deneme`,
+    [],
   );
 
   useEffect(() => {
@@ -59,49 +71,66 @@ export function ReaderTocMenu({
       ref={wrapRef}
       className="absolute bottom-4 left-4 z-50 sm:bottom-6 sm:left-6"
     >
-      <button
-        type="button"
-        onClick={() => onOpenChange(!open)}
-        aria-label="İçindekiler"
-        aria-expanded={open}
-        aria-haspopup="menu"
-        className={cn(
-          "reader-corner-btn flex h-10 w-10 items-center justify-center rounded-full text-stone-400 transition-colors hover:bg-stone-200/50 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-stone-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f7f5] sm:h-11 sm:w-11",
-          open && "bg-stone-200/60 text-stone-700",
+      <div className="flex max-w-[min(52vw,20rem)] items-center gap-3">
+        <button
+          type="button"
+          onClick={() => onOpenChange(!open)}
+          aria-label="İçindekiler"
+          aria-expanded={open}
+          aria-haspopup="dialog"
+          className={cn(
+            "reader-corner-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:h-11 sm:w-11",
+            open && "bg-surface-muted text-ink",
+          )}
+        >
+          <ListTree className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+        </button>
+
+        {!open && (
+          <span className="pointer-events-none min-w-0 truncate text-xs text-reader-body sm:text-sm">
+            {sectionTitle}
+          </span>
         )}
-      >
-        <List className="h-5 w-5" strokeWidth={1.5} />
-      </button>
+      </div>
 
       <AnimatePresence>
         {open && (
           <motion.div
-            role="menu"
+            role="dialog"
             aria-label="İçindekiler"
-            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 6, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute bottom-full left-0 z-50 mb-3 w-[min(calc(100vw-2rem),22rem)] overflow-hidden rounded-2xl border border-stone-200/90 bg-white/98 shadow-[0_12px_40px_rgba(0,0,0,0.08)] backdrop-blur-md"
+            exit={{ opacity: 0, y: 8, scale: 0.99 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="reader-toc-dropdown absolute bottom-full left-0 z-50 mb-3"
           >
-            <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-              <h2 className="font-serif text-sm font-semibold text-stone-900">
-                İçindekiler
-              </h2>
+            <header className="reader-toc-dropdown-header">
               <button
                 type="button"
                 onClick={close}
-                className="rounded-full p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+                className="reader-toc-close flex h-7 w-7 items-center justify-center rounded-full text-reader-body transition-colors hover:bg-bg-alt hover:text-reader-title focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
                 aria-label="Menüyü kapat"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" strokeWidth={1.5} />
               </button>
-            </div>
-            <div className="max-h-[min(52vh,380px)] overflow-y-auto overscroll-contain px-3 py-3">
+              <div className="min-w-0">
+                <h2 className="font-sans text-sm font-medium text-reader-title">
+                  İçindekiler
+                </h2>
+                <p className="mt-0.5 text-[11px] text-reader-body">{summary}</p>
+              </div>
+            </header>
+            <div className="reader-toc-scroll">
               <ReaderTOC
                 items={items}
                 currentItemId={currentItemId}
+                isOnCover={isOnCover}
                 onSelect={handleSelect}
+                onSelectCover={() => {
+                  onSelectCover();
+                  close();
+                }}
+                menuOpen={open}
               />
             </div>
           </motion.div>

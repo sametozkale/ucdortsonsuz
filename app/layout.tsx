@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Literata } from "next/font/google";
+import { IBM_Plex_Serif, Inter, Literata } from "next/font/google";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { baseMetadata } from "@/lib/seo/metadata";
@@ -18,6 +18,13 @@ const literata = Literata({
   display: "swap",
 });
 
+const ibmPlexSerif = IBM_Plex_Serif({
+  variable: "--font-ibm-plex-serif",
+  weight: ["400", "500"],
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   ...baseMetadata,
   manifest: "/manifest.json",
@@ -31,7 +38,7 @@ export default function RootLayout({
   return (
     <html
       lang="tr"
-      className={`${inter.variable} ${literata.variable} h-full antialiased`}
+      className={`${inter.variable} ${literata.variable} ${ibmPlexSerif.variable} h-full antialiased`}
     >
       <head>
         <JsonLd data={websiteJsonLd()} />

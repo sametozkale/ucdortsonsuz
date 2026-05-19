@@ -1,3 +1,4 @@
+import { Container } from "@/components/layout/Container";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { MOCK_FAQ } from "@/lib/book/mock-data";
 import { faqJsonLd } from "@/lib/seo/json-ld";
@@ -14,7 +15,8 @@ export default function SssPage() {
   return (
     <>
       <JsonLd data={faqJsonLd(MOCK_FAQ)} />
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
+      <div className="site-section">
+        <Container>
         <h1 className="font-serif text-4xl font-semibold text-stone-900">
           Sık sorulan sorular
         </h1>
@@ -30,6 +32,7 @@ export default function SssPage() {
             </div>
           ))}
         </dl>
+        </Container>
       </div>
     </>
   );

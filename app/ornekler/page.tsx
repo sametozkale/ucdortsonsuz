@@ -50,7 +50,7 @@ export default async function OrneklerPage({
           />
         </div>
 
-        <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+        <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
           {filtered.map((item) => {
             const href =
               item.kind === "poem"

@@ -7,6 +7,19 @@ export function getBookmarkKey(bookId: string): string {
   return `${BOOKMARK_STORAGE_KEY}:${bookId}`;
 }
 
+export function getReaderSessionKey(bookId: string): string {
+  return `${BOOKMARK_STORAGE_KEY}:reader-session:${bookId}`;
+}
+
+/** Bu sekmede okuyucu daha önce açıldıysa false; ilk açılışta true döner ve oturumu işaretler. */
+export function markReaderSessionStarted(bookId: string): boolean {
+  if (typeof window === "undefined") return false;
+  const key = getReaderSessionKey(bookId);
+  if (sessionStorage.getItem(key)) return false;
+  sessionStorage.setItem(key, "1");
+  return true;
+}
+
 export function loadBookmark(bookId: string): Bookmark | null {
   if (typeof window === "undefined") return null;
   try {

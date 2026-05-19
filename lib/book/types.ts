@@ -55,6 +55,20 @@ export interface BookItemPublic {
   section_type?: BookSectionType;
 }
 
+export interface TocPageEntry {
+  title: string;
+  itemId: string;
+}
+
+export interface TocPageContent {
+  showFullHeader: boolean;
+  frontMatter: TocPageEntry[];
+  showPoemsHeading: boolean;
+  poems: TocPageEntry[];
+  showEssaysHeading: boolean;
+  essays: TocPageEntry[];
+}
+
 export interface ReaderPage {
   itemId: string;
   itemTitle: string;
@@ -66,6 +80,10 @@ export interface ReaderPage {
   totalPagesInItem: number;
   globalPageIndex: number;
   content: string;
+  /** Kitap kapağı sayfası (önsözden önce) */
+  isCover?: boolean;
+  /** İçindekiler sayfası dilimi (çok sayfalı TOC) */
+  tocSlice?: TocPageContent;
 }
 
 export interface Bookmark {

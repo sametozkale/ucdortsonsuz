@@ -38,7 +38,7 @@ export default async function KitapPage() {
         ])}
       />
       <article className="site-section">
-        <Container className="max-w-3xl">
+        <Container>
         <PageIntro
           eyebrow={AUTHOR_NAME}
           title={BOOK_TITLE}

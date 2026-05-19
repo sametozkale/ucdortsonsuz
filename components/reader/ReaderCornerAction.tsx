@@ -59,8 +59,8 @@ export function ReaderCornerMeta({
       className={cn(
         "pointer-events-none absolute z-40 max-w-[40vw] text-xs text-ink-tertiary sm:text-sm",
         corner === "bottom-left"
-          ? "bottom-5 left-16 sm:bottom-7 sm:left-20"
-          : "bottom-5 right-16 text-right sm:bottom-7 sm:right-20",
+          ? "bottom-14 left-4 sm:bottom-16 sm:left-6"
+          : "bottom-14 right-14 text-right sm:bottom-16 sm:right-16",
         className,
       )}
     >

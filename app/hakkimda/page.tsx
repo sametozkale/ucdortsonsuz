@@ -1,3 +1,4 @@
+import { Container } from "@/components/layout/Container";
 import { Prose } from "@/components/marketing/Prose";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
@@ -24,7 +25,8 @@ export default function HakkimdaPage() {
           { name: "Hakkımda", path: "/hakkimda" },
         ])}
       />
-      <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
+      <article className="site-section">
+        <Container>
         <header className="flex flex-col gap-8 sm:flex-row sm:items-start">
           <div
             className="flex h-48 w-48 shrink-0 items-center justify-center rounded-lg bg-stone-200 text-stone-500"
@@ -58,6 +60,7 @@ export default function HakkimdaPage() {
             <Prose>{MOCK_PRESS_RELEASE}</Prose>
           </div>
         </section>
+        </Container>
       </article>
     </>
   );

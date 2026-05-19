@@ -1,3 +1,4 @@
+import { Container } from "@/components/layout/Container";
 import { pageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = pageMetadata({
@@ -8,7 +9,8 @@ export const metadata = pageMetadata({
 
 export default function KullanimPage() {
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <article className="site-section">
+      <Container>
       <h1 className="font-serif text-3xl font-semibold text-stone-900">
         Kullanım Koşulları
       </h1>
@@ -21,6 +23,7 @@ export default function KullanimPage() {
         Satın alınan içerikler hesap sahibine özeldir; paylaşım hakkı
         devredilmez.
       </p>
+      </Container>
     </article>
   );
 }

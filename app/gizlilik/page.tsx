@@ -1,3 +1,4 @@
+import { Container } from "@/components/layout/Container";
 import { pageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = pageMetadata({
@@ -8,7 +9,8 @@ export const metadata = pageMetadata({
 
 export default function GizlilikPage() {
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 prose prose-stone">
+    <article className="site-section prose prose-stone">
+      <Container>
       <h1 className="font-serif text-3xl font-semibold">Gizlilik Politikası</h1>
       <p className="mt-6 text-stone-700 leading-relaxed">
         Bu site, Samet Özkale&apos;nin Üç Dört Sonsuz kitabını tanıtmak ve
@@ -24,6 +26,7 @@ export default function GizlilikPage() {
       <p className="mt-4 text-stone-700 leading-relaxed">
         Sorularınız için: info@ucdortsonsuz.com
       </p>
+      </Container>
     </article>
   );
 }

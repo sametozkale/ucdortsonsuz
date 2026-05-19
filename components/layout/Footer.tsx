@@ -20,7 +20,7 @@ export function Footer() {
   return (
     <footer className="mt-auto border-t border-border bg-bg">
       <Container className="py-12 sm:py-16">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-10 sm:grid-cols-2">
           <div>
             <p className="eyebrow mb-3">Kitap</p>
             <Logo href="/" size="sm" markClassName="text-ink" />
