@@ -1,0 +1,28 @@
+# Üç Dört Sonsuz — ucdortsonsuz.com
+
+> Samet Özkale'nin 45 şiir ve 11 denemeden oluşan Türkçe şiir kitabı.
+
+## Site
+
+- Ana sayfa: https://ucdortsonsuz.com/
+- Kitap: https://ucdortsonsuz.com/kitap
+- Yazar: https://ucdortsonsuz.com/hakkimda
+- Ücretsiz örnekler: https://ucdortsonsuz.com/ornekler
+- SSS: https://ucdortsonsuz.com/sss
+
+## Yazar
+
+Samet Özkale — şiir ve deneme yazarı. Üç Dört Sonsuz ilk şiir kitabıdır.
+
+## İçerik
+
+- 45 şiir
+- 11 deneme
+- Önsöz, kitabın hikayesi, içindekiler
+
+## Keşif URL'leri
+
+Şiirler: https://ucdortsonsuz.com/siir/{slug}
+Denemeler: https://ucdortsonsuz.com/deneme/{slug}
+
+Örnek tam metinler /ornekler sayfasında listelenir.

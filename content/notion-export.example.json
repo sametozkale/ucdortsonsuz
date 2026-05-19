@@ -1,0 +1,58 @@
+{
+  "sections": [
+    {
+      "type": "front_matter",
+      "title": "Önsöz",
+      "items": [
+        {
+          "kind": "page",
+          "title": "Önsöz",
+          "slug": "onsoz",
+          "body_md": "Önsöz metni buraya…",
+          "excerpt": "Kitabın önsözü.",
+          "is_sample": false
+        }
+      ]
+    },
+    {
+      "type": "story",
+      "title": "Kitabın Hikayesi",
+      "items": [
+        {
+          "kind": "page",
+          "title": "Kitabın Hikayesi",
+          "slug": "kitabin-hikayesi",
+          "body_md": "Hikaye metni…",
+          "is_sample": true
+        }
+      ]
+    },
+    {
+      "type": "poems",
+      "title": "Şiirler",
+      "items": [
+        {
+          "kind": "poem",
+          "title": "Zeytin Ağacı",
+          "slug": "zeytin-agaci",
+          "body_md": "Zeytin dallarının karmaşasıyım ben\n\nYeşilin hakimiyeti kahverenginin mağduriyetiyim\n\n…",
+          "excerpt": "Zeytin ağacı, toprak ve kökler üzerine bir şiir.",
+          "is_sample": true
+        }
+      ]
+    },
+    {
+      "type": "essays",
+      "title": "Denemeler",
+      "items": [
+        {
+          "kind": "essay",
+          "title": "İlk Deneme",
+          "slug": "ilk-deneme",
+          "body_md": "Deneme metni…",
+          "is_sample": false
+        }
+      ]
+    }
+  ]
+}

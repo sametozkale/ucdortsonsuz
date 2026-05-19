@@ -1,65 +1,115 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Container } from "@/components/layout/Container";
+import { EditorialCard } from "@/components/marketing/EditorialCard";
+import { FilterPills } from "@/components/marketing/FilterPills";
+import { NewsletterForm } from "@/components/marketing/NewsletterForm";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getSampleItems } from "@/lib/book/queries";
+import {
+  AUTHOR_NAME,
+  BOOK_TITLE,
+  ESSAY_COUNT,
+  POEM_COUNT,
+  SITE_NAME,
+} from "@/lib/constants";
+import { bookJsonLd } from "@/lib/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/metadata";
 
-export default function Home() {
+export const metadata = pageMetadata({
+  title: SITE_NAME,
+  description: `${AUTHOR_NAME}'nin ${POEM_COUNT} şiir ve ${ESSAY_COUNT} denemeden oluşan şiir kitabı. Ücretsiz örnekler ve dijital okuma.`,
+  path: "/",
+});
+
+export default async function HomePage() {
+  const samples = await getSampleItems();
+  const poems = samples.filter((i) => i.kind === "poem");
+  const essays = samples.filter((i) => i.kind === "essay");
+  const gridItems = samples.slice(0, 8);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      <JsonLd data={bookJsonLd()} />
+
+      {/* Hero — Curated-style editorial */}
+      <section className="site-section site-section--hero border-b border-border">
+        <Container>
+          <p className="eyebrow">Şiir kitabı · {AUTHOR_NAME}</p>
+          <h1 className="text-display mt-4">{BOOK_TITLE}</h1>
+          <p className="prose-width mt-6 text-lg text-ink-secondary">
+            {POEM_COUNT} şiir ve {ESSAY_COUNT} deneme — sayılar ile sonsuzluk
+            arasında. Dijital okuyucuda çevir, ücretsiz örnekleri keşfet.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/satin-al" className="btn-primary">
+              Kitabı satın al
+            </Link>
+            <Link href="/ornekler" className="btn-ghost">
+              Ücretsiz örnek oku
+            </Link>
+          </div>
+
+          <div className="mt-14 max-w-md border-t border-border pt-10">
+            <p className="text-sm font-medium text-ink">E-posta listesi</p>
+            <p className="mt-1 text-sm text-ink-secondary">
+              Yeni şiirler ve kitap haberleri — haftalık değil, nadiren.
+            </p>
+            <div className="mt-5">
+              <NewsletterForm />
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Grid + filters */}
+      <section className="site-section">
+        <Container>
+          <div className="sticky top-16 z-[100] -mx-[var(--gutter)] border-b border-border bg-bg-alt/95 px-[var(--gutter)] py-4 backdrop-blur-md supports-[backdrop-filter]:bg-bg-alt/90 sm:top-[4.5rem]">
+            <FilterPills
+              items={[
+                { href: "/ornekler", label: "Tümü", active: true },
+                { href: "/ornekler?tur=siir", label: `Şiir (${poems.length})` },
+                { href: "/ornekler?tur=deneme", label: `Deneme (${essays.length})` },
+                { href: "/kitap", label: "Kitap" },
+              ]}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+          </div>
+
+          <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+            {gridItems.map((item) => {
+              const href =
+                item.kind === "poem"
+                  ? `/siir/${item.slug}`
+                  : item.kind === "essay"
+                    ? `/deneme/${item.slug}`
+                    : "/kitap";
+              return (
+                <li key={item.id}>
+                  <EditorialCard
+                    href={href}
+                    tag={item.kind === "poem" ? "Şiir" : "Deneme"}
+                    title={item.title}
+                    description={item.excerpt}
+                    meta="Ücretsiz örnek"
+                  />
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="mt-10 flex justify-center">
+            <Link href="/ornekler" className="btn-ghost">
+              Tüm örnekleri gör
+            </Link>
+          </div>
+
+          <p className="disclaimer-bar mt-12">
+            Örnek metinler tanıtım amaçlıdır. Tam kitap dijital okuyucu ve e-kitap
+            erişimi satın alma sonrası açılır. Fiyatlar ve erişim koşulları
+            değişebilir.
+          </p>
+        </Container>
+      </section>
+    </>
   );
 }
