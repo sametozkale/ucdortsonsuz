@@ -225,6 +225,9 @@ export const MOCK_AUTHOR_BIO = `Samet Özkale, şiir ve düzyazı üzerine çal�
 
 Yazılarında bellek, şehir, aile ve kelimelerin gölgesi öne çıkar. Türkçe edebiyatın çağdaş sesine katkı sunmayı hedefler.`;
 
+/** Yazarın kitap hakkındaki sözleri (biyografi / basın metninden). */
+export const MOCK_AUTHOR_BOOK_QUOTE = `Üç Dört Sonsuz'da sayı ile sonsuzluk arasında kurduğum diyaloğu okura bırakmak istedim. Şiirler belleği, denemeler kelimelerin gölgesini taşıyor — her metin, kendi ritminde okunmak için yazıldı.`;
+
 export const MOCK_PRESS_RELEASE = `**Basın Bülteni — Üç Dört Sonsuz**
 
 Samet Özkale'nin yeni şiir kitabı *Üç Dört Sonsuz*, 45 şiir ve 11 denemeden oluşuyor. Kitap, sayılar ile sonsuzluk arasında kurulan şiirsel bir diyaloğu okura sunuyor.

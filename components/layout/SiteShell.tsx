@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header";
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isReader = pathname === "/oku" || pathname?.startsWith("/oku/");
+  const isHome = pathname === "/";
 
   if (isReader) {
     return <>{children}</>;
@@ -20,7 +21,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       >
         İçeriğe atla
       </a>
-      <Header />
+      {!isHome && <Header />}
       <main id="main-content" className="flex-1">
         {children}
       </main>

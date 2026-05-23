@@ -1,11 +1,12 @@
 import { Container } from "@/components/layout/Container";
+import { AuthorPortrait } from "@/components/marketing/AuthorPortrait";
 import { Prose } from "@/components/marketing/Prose";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   MOCK_AUTHOR_BIO,
   MOCK_PRESS_RELEASE,
 } from "@/lib/book/mock-data";
-import { AUTHOR_NAME, BOOK_TITLE } from "@/lib/constants";
+import { AUTHOR_NAME, AUTHOR_PHOTO_SRC, BOOK_TITLE } from "@/lib/constants";
 import { breadcrumbJsonLd, personJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 
@@ -28,13 +29,11 @@ export default function HakkimdaPage() {
       <article className="site-section">
         <Container>
         <header className="flex flex-col gap-8 sm:flex-row sm:items-start">
-          <div
-            className="flex h-48 w-48 shrink-0 items-center justify-center rounded-lg bg-stone-200 text-stone-500"
-            role="img"
-            aria-label={`${AUTHOR_NAME} fotoğrafı`}
-          >
-            Fotoğraf
-          </div>
+          <AuthorPortrait
+            name={AUTHOR_NAME}
+            src={AUTHOR_PHOTO_SRC}
+            className="shrink-0"
+          />
           <div>
             <h1 className="font-serif text-4xl font-semibold text-stone-900">
               {AUTHOR_NAME}

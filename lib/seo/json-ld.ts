@@ -1,5 +1,6 @@
 import {
   AUTHOR_NAME,
+  AUTHOR_PHOTO_SRC,
   BOOK_DESCRIPTION,
   BOOK_TITLE,
   SITE_NAME,
@@ -33,6 +34,7 @@ export function personJsonLd() {
     "@type": "Person",
     name: AUTHOR_NAME,
     url: `${SITE_URL}/hakkimda`,
+    image: `${SITE_URL}${AUTHOR_PHOTO_SRC}`,
     jobTitle: "Yazar",
     description: `${BOOK_TITLE} kitabının yazarı.`,
     knowsAbout: ["Türkçe şiir", "deneme", "edebiyat"],

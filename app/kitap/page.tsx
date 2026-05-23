@@ -69,14 +69,18 @@ export default async function KitapPage() {
 
         <section className="mt-12" aria-labelledby="icindekiler">
           <h2 id="icindekiler" className="font-display text-xl font-semibold text-ink">
-            İçindekiler (özet)
+            İçindekiler
           </h2>
-          <div className="mt-6 grid gap-8 sm:grid-cols-2">
+          <p className="mt-2 text-sm text-ink-secondary">
+            Kitaptaki tüm şiir ve denemeler ({poems.length} şiir, {essays.length}{" "}
+            deneme).
+          </p>
+          <div className="mt-6 grid gap-10 sm:grid-cols-2">
             <div>
               <h3 className="eyebrow">
-                Şiirler
+                Şiirler ({poems.length})
               </h3>
-              <ul className="mt-3 max-h-64 space-y-1 overflow-y-auto text-sm">
+              <ul className="mt-3 space-y-1.5 text-sm">
                 {poems.map((p) => (
                   <li key={p.id}>
                     <Link
@@ -91,9 +95,9 @@ export default async function KitapPage() {
             </div>
             <div>
               <h3 className="eyebrow">
-                Denemeler
+                Denemeler ({essays.length})
               </h3>
-              <ul className="mt-3 max-h-64 space-y-1 overflow-y-auto text-sm">
+              <ul className="mt-3 space-y-1.5 text-sm">
                 {essays.map((e) => (
                   <li key={e.id}>
                     <Link

@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { ReaderDownloadMenu } from "@/components/reader/ReaderDownloadMenu";
 import { ReaderPageIndicator } from "@/components/reader/ReaderPageIndicator";
 import { ReaderTocMenu } from "@/components/reader/ReaderTocMenu";
 import {
@@ -173,15 +174,18 @@ export function BookReader({ book, items }: BookReaderProps) {
     <div className="reader-canvas relative min-h-dvh w-full">
       <header className="reader-top-bar absolute inset-x-0 top-4 z-50 px-4 sm:top-6 sm:px-6">
         <div className="relative flex h-10 items-center sm:h-11">
-          <Link
-            href="/"
-            aria-label="Ana sayfaya dön"
-            className="reader-corner-btn relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:h-11 sm:w-11"
-          >
-            <Home className="h-5 w-5" strokeWidth={1.5} />
-          </Link>
+          <div className="relative z-10 flex shrink-0 items-center gap-0.5">
+            <Link
+              href="/"
+              aria-label="Ana sayfaya dön"
+              className="reader-corner-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:h-11 sm:w-11"
+            >
+              <Home className="h-5 w-5" strokeWidth={1.5} />
+            </Link>
+            <ReaderDownloadMenu />
+          </div>
 
-          <h1 className="reader-header-title pointer-events-none absolute inset-x-12 top-0 bottom-0 flex items-center justify-center truncate text-center font-sans text-xs font-medium leading-none text-reader-title sm:inset-x-14 sm:text-sm">
+          <h1 className="reader-header-title pointer-events-none absolute top-0 right-12 bottom-0 left-[5.75rem] flex items-center justify-center truncate text-center font-sans text-xs font-medium leading-none text-reader-title sm:right-14 sm:left-28 sm:text-sm">
             {book.title}
           </h1>
 

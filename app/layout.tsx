@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Serif, Inter, Literata } from "next/font/google";
+import {
+  IBM_Plex_Serif,
+  Inter,
+  Libre_Baskerville,
+  Literata,
+} from "next/font/google";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { baseMetadata } from "@/lib/seo/metadata";
@@ -25,6 +30,14 @@ const ibmPlexSerif = IBM_Plex_Serif({
   display: "swap",
 });
 
+/** Hero kitap adı ve scroll paragrafı */
+const libreBaskerville = Libre_Baskerville({
+  variable: "--font-libre-baskerville",
+  weight: ["400", "700"],
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   ...baseMetadata,
   manifest: "/manifest.json",
@@ -38,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="tr"
-      className={`${inter.variable} ${literata.variable} ${ibmPlexSerif.variable} h-full antialiased`}
+      className={`${inter.variable} ${literata.variable} ${ibmPlexSerif.variable} ${libreBaskerville.variable} h-full antialiased`}
     >
       <head>
         <JsonLd data={websiteJsonLd()} />

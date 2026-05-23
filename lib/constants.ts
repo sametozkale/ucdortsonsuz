@@ -10,7 +10,14 @@ export const POEM_COUNT = 45;
 export const ESSAY_COUNT = 11;
 export const BOOKMARK_STORAGE_KEY = "ucdortsonsuz:bookmark";
 
+/** Yazar portresi — `public/images/samet-ozkale.jpg` */
+export const AUTHOR_PHOTO_SRC = "/images/samet-ozkale.jpg";
+
 /** Kapak arka planı — Tiago Ferreira / Unsplash */
 export const BOOK_COVER_BG_URL = "/images/book-cover-bg.jpg";
 export const BOOK_COVER_BG_ALT =
   "Zeytin dalları, berrak mavi gökyüzüne karşı";
+
+/** Ana sayfa hero arka plan videosu — `public/videos/hero.mp4` */
+export const HERO_VIDEO_URL = "/videos/hero.mp4";
+export const HERO_VIDEO_POSTER_URL = BOOK_COVER_BG_URL;

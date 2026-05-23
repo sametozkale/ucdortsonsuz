@@ -11,7 +11,7 @@ const nav = [
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-[100] border-b border-border bg-bg/95 backdrop-blur-md supports-[backdrop-filter]:bg-bg/85">
+    <header className="sticky top-0 z-[100] bg-bg/95 backdrop-blur-md supports-[backdrop-filter]:bg-bg/85">
       <Container className="flex h-16 items-center justify-between gap-4 sm:h-[4.5rem]">
         <Logo href="/" size="md" markClassName="text-ink" />
 
@@ -31,18 +31,12 @@ export function Header() {
           <Link href="/satin-al" className="btn-primary !min-h-9 !px-4 !text-xs">
             Satın Al
           </Link>
-          <Link href="/oku" className="btn-ghost !min-h-9 !px-4 !text-xs">
-            Oku
-          </Link>
         </nav>
 
         <nav
           aria-label="Mobil menü"
           className="flex items-center gap-2 md:hidden"
         >
-          <Link href="/oku" className="btn-ghost !min-h-9 !px-3 !text-xs">
-            Oku
-          </Link>
           <Link href="/ornekler" className="btn-primary !min-h-9 !px-3 !text-xs">
             Örnekler
           </Link>
