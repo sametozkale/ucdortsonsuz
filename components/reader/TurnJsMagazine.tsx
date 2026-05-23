@@ -12,14 +12,21 @@ import {
 } from "react";
 import { BookCoverPage } from "@/components/reader/BookCoverPage";
 import { BookPage } from "@/components/reader/BookPage";
+import { BookThanksPage } from "@/components/reader/BookThanksPage";
 import { BookTocPage } from "@/components/reader/BookTocPage";
 import type { ReaderPage } from "@/lib/book/types";
+import { debounce } from "@/lib/reader/debounce";
 import { loadTurnJs } from "@/lib/reader/load-turn-js";
-import { configureTurnFlipPages } from "@/lib/reader/turn-flip-corners";
-import { styleTurnTemporalPaper } from "@/lib/reader/turn-temporal-paper";
+import {
+  configureTurnFlipPages,
+  primeStoryPageFlip,
+} from "@/lib/reader/turn-flip-corners";
+import {
+  styleTurnTemporalPaper,
+  tagTurnFoldLayer,
+} from "@/lib/reader/turn-temporal-paper";
 import {
   measureTurnMagazine,
-  primaryPageIndexFromView,
   resolveTurnDisplay,
   spreadSideForPage,
   visiblePageIndicesFromView,
@@ -86,6 +93,7 @@ export const TurnJsMagazine = forwardRef<
   const onAnimatingChangeRef = useRef(onAnimatingChange);
   const displayRef = useRef<TurnDisplayMode>("single");
   const layoutHandledForPageRef = useRef<number | null>(null);
+  const pendingGoToIndexRef = useRef<number | null>(null);
   const applyingLayoutRef = useRef(false);
   const reducedMotionRef = useRef(false);
   const [displayMode, setDisplayMode] = useState<TurnDisplayMode>("single");
@@ -143,6 +151,7 @@ export const TurnJsMagazine = forwardRef<
   );
 
   pageIndexRef.current = pageIndex;
+  pendingGoToIndexRef.current = null;
   onPageChangeRef.current = onPageChange;
   onVisibleIndicesChangeRef.current = onVisibleIndicesChange;
   onAnimatingChangeRef.current = onAnimatingChange;
@@ -215,6 +224,7 @@ export const TurnJsMagazine = forwardRef<
           mode,
           !reducedMotionRef.current,
           pages[0]?.isCover ? 1 : 0,
+          pages,
         );
         styleTurnTemporalPaper($magazine);
         requestAnimationFrame(() => {
@@ -254,6 +264,7 @@ export const TurnJsMagazine = forwardRef<
         mode,
         !reducedMotionRef.current,
         pages[0]?.isCover ? 1 : 0,
+        pages,
       );
       styleTurnTemporalPaper($magazine);
 
@@ -335,6 +346,9 @@ export const TurnJsMagazine = forwardRef<
         const $magazine = getMagazine();
         if (!$magazine || !readyRef.current) return;
         if (index < 0 || index >= pages.length) return;
+
+        pendingGoToIndexRef.current = index;
+
         if (pages[pageIndexRef.current]?.isCover && index > 0) {
           setTurnDuration($magazine, TURN_DURATION_COVER_MS);
         } else if (pages[index]?.isCover) {
@@ -346,6 +360,18 @@ export const TurnJsMagazine = forwardRef<
         const current = $magazine.turn("page");
         if (current !== target) {
           $magazine.turn("page", target);
+          return;
+        }
+
+        pendingGoToIndexRef.current = null;
+        onAnimatingChangeRef.current?.(false);
+        const view = ($magazine.turn("view") as number[]) ?? [target];
+        publishViewRef.current(view, target);
+        const prevIndex = pageIndexRef.current;
+        if (index !== prevIndex) {
+          pageIndexRef.current = index;
+          onPageChangeRef.current(index);
+          layoutHandledForPageRef.current = index;
         }
       },
       isAnimating: () => {
@@ -362,8 +388,9 @@ export const TurnJsMagazine = forwardRef<
     let $magazine: JQuery | null = null;
 
     async function init() {
-      const $ = await loadTurnJs();
-      if (cancelled || !magazineRef.current) return;
+      try {
+        const $ = await loadTurnJs();
+        if (cancelled || !magazineRef.current) return;
 
       jqueryRef.current = $;
       const reducedMotion = window.matchMedia(
@@ -400,19 +427,26 @@ export const TurnJsMagazine = forwardRef<
             const viewArr = view as number[];
             publishViewRef.current(viewArr, page as number);
             const prevIndex = pageIndexRef.current;
-            const nextIndex = primaryPageIndexFromView(viewArr, page as number);
+            const pending = pendingGoToIndexRef.current;
+            const nextIndex =
+              pending !== null
+                ? pending
+                : Math.max(
+                    0,
+                    Math.min(pages.length - 1, (page as number) - 1),
+                  );
+            pendingGoToIndexRef.current = null;
+
             const leavingCover =
               pages[prevIndex]?.isCover === true && nextIndex > 0;
             const enteringCover = pages[nextIndex]?.isCover === true;
 
-            if (
-              nextIndex >= 0 &&
-              nextIndex < pages.length &&
-              nextIndex !== prevIndex
-            ) {
+            if (nextIndex >= 0 && nextIndex < pages.length) {
               pageIndexRef.current = nextIndex;
-              onPageChangeRef.current(nextIndex);
-              layoutHandledForPageRef.current = nextIndex;
+              if (nextIndex !== prevIndex) {
+                onPageChangeRef.current(nextIndex);
+                layoutHandledForPageRef.current = nextIndex;
+              }
             }
 
             const $mag = jqueryRef.current?.(magazineRef.current!);
@@ -423,6 +457,7 @@ export const TurnJsMagazine = forwardRef<
                 displayRef.current,
                 !reducedMotionRef.current,
                 pages[0]?.isCover ? 1 : 0,
+                pages,
               );
               styleTurnTemporalPaper($mag);
               if (leavingCover || enteringCover) {
@@ -446,6 +481,7 @@ export const TurnJsMagazine = forwardRef<
         mode,
         !reducedMotion,
         pages[0]?.isCover ? 1 : 0,
+        pages,
       );
       styleTurnTemporalPaper($magazine);
       const initialView = $magazine.turn("view") as number[] | undefined;
@@ -457,6 +493,11 @@ export const TurnJsMagazine = forwardRef<
         updateSpineLayoutRef.current();
         syncBookShellSize();
       });
+      } catch (error) {
+        if (!cancelled) {
+          console.error("[reader] turn.js başlatılamadı", error);
+        }
+      }
     }
 
     void init();
@@ -464,11 +505,12 @@ export const TurnJsMagazine = forwardRef<
     return () => {
       cancelled = true;
       readyRef.current = false;
+      const magazineEl = magazineRef.current;
       if ($magazine) {
         $magazine.off("turning turned");
         $magazine.removeData();
-        if (magazineRef.current) {
-          magazineRef.current.innerHTML = "";
+        if (magazineEl) {
+          magazineEl.innerHTML = "";
         }
       }
     };
@@ -493,9 +535,37 @@ export const TurnJsMagazine = forwardRef<
   }, [displayMode, pageIndex, updateSpineLayout]);
 
   useEffect(() => {
+    if (!readyRef.current || displayMode !== "double") return;
+    const $magazine = getMagazine();
+    if (!$magazine?.length) return;
+
+    const storyTurnPage =
+      pages.findIndex((p) => p.itemSlug === "kitabin-hikayesi") + 1;
+    if (storyTurnPage < 1) return;
+
+    const view = ($magazine.turn("view") as number[]) ?? [];
+    if (!view.includes(storyTurnPage)) return;
+
+    primeStoryPageFlip(
+      $magazine,
+      displayMode,
+      !reducedMotionRef.current,
+      pages[0]?.isCover ? 1 : 0,
+      pages,
+    );
+  }, [displayMode, pageIndex, pages, getMagazine]);
+
+  useEffect(() => {
     document.body.classList.toggle("reader-cover-active", isCoverActive);
+    if (isCoverActive) {
+      const $mag = getMagazine();
+      if ($mag?.length) {
+        tagTurnFoldLayer($mag);
+        styleTurnTemporalPaper($mag);
+      }
+    }
     return () => document.body.classList.remove("reader-cover-active");
-  }, [isCoverActive]);
+  }, [isCoverActive, getMagazine]);
 
   useEffect(() => {
     if (!readyRef.current || displayMode !== "double") return;
@@ -539,13 +609,13 @@ export const TurnJsMagazine = forwardRef<
   }, [pageIndex, getMagazine, applyLayout, pages]);
 
   useEffect(() => {
-    const onResize = () => {
+    const onResize = debounce(() => {
       if (!readyRef.current) return;
       const $magazine = getMagazine();
       if (!$magazine) return;
       const currentPage = $magazine.turn("page");
       applyLayout($magazine, { keepPage: currentPage });
-    };
+    }, 120);
 
     const ro =
       typeof ResizeObserver !== "undefined" && containerRef.current
@@ -556,6 +626,7 @@ export const TurnJsMagazine = forwardRef<
     window.addEventListener("resize", onResize);
 
     return () => {
+      onResize.cancel();
       ro?.disconnect();
       window.removeEventListener("resize", onResize);
     };
@@ -607,6 +678,11 @@ export const TurnJsMagazine = forwardRef<
                     className="h-full"
                     onSelectItem={onTocSelectItem}
                     disabled={interactionDisabled}
+                  />
+                ) : page.itemSlug === "tesekkurler" ? (
+                  <BookThanksPage
+                    spreadSide={spreadSideForPage(page, displayMode)}
+                    className="h-full"
                   />
                 ) : (
                   <BookPage

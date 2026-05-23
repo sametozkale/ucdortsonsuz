@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { Download } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -10,11 +11,26 @@ import {
 } from "@/lib/book/downloads";
 import { cn } from "@/lib/utils";
 
-export function ReaderDownloadMenu() {
+interface ReaderDownloadMenuProps {
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function ReaderDownloadMenu({ onOpenChange }: ReaderDownloadMenuProps) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  const close = useCallback(() => setOpen(false), []);
+  const setOpenTracked = useCallback(
+    (next: boolean | ((prev: boolean) => boolean)) => {
+      setOpen((prev) => {
+        const value = typeof next === "function" ? next(prev) : next;
+        onOpenChange?.(value);
+        return value;
+      });
+    },
+    [onOpenChange],
+  );
+
+  const close = useCallback(() => setOpenTracked(false), [setOpenTracked]);
 
   useEffect(() => {
     if (!open) return;
@@ -40,15 +56,15 @@ export function ReaderDownloadMenu() {
     <div
       ref={wrapRef}
       className="relative"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={() => setOpenTracked(true)}
+      onMouseLeave={() => setOpenTracked(false)}
     >
       <button
         type="button"
         aria-label="Kitabı indir"
         aria-expanded={open}
-        aria-haspopup="menu"
-        onClick={() => setOpen((value) => !value)}
+        aria-haspopup="dialog"
+        onClick={() => setOpenTracked((value) => !value)}
         className={cn(
           "reader-corner-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:h-11 sm:w-11",
           open && "bg-surface-muted text-ink",
@@ -57,40 +73,49 @@ export function ReaderDownloadMenu() {
         <Download className="h-5 w-5" strokeWidth={1.5} aria-hidden />
       </button>
 
-      <div
-        role="menu"
-        aria-label="İndirme biçimleri"
-        className={cn(
-          "reader-download-dropdown absolute left-0 top-full z-50 mt-2 min-w-[10.5rem] py-1 transition-[opacity,visibility,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          open
-            ? "visible translate-y-0 opacity-100"
-            : "invisible -translate-y-1 opacity-0 pointer-events-none",
-        )}
-      >
-        {BOOK_DOWNLOAD_FORMATS.map((format) => (
-          <a
-            key={format.id}
-            role="menuitem"
-            href={getBookDownloadApiPath(format.id)}
-            download={getBookDownloadFilename(format)}
-            className="reader-download-dropdown__item"
-            onClick={close}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="İndirme biçimleri"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.99 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="reader-toc-dropdown absolute left-0 top-full z-50 mt-3"
           >
-            <span className="reader-download-dropdown__icon" aria-hidden>
-              <Image
-                src={format.logoSrc}
-                alt=""
-                width={36}
-                height={20}
-                className="h-5 w-auto max-w-[2.25rem] object-contain object-left"
-              />
-            </span>
-            <span className="reader-download-dropdown__label">
-              {format.shortLabel}
-            </span>
-          </a>
-        ))}
-      </div>
+            <nav aria-label="İndirme biçimleri" className="reader-toc-nav reader-toc-scroll">
+              <ul className="reader-toc-list reader-toc-list--root">
+                {BOOK_DOWNLOAD_FORMATS.map((format) => (
+                  <li key={format.id}>
+                    <a
+                      href={getBookDownloadApiPath(format.id)}
+                      download={getBookDownloadFilename(format)}
+                      className="reader-toc-row"
+                      onClick={close}
+                    >
+                      <span
+                        className="flex h-[1.625rem] w-[1.625rem] items-center justify-center"
+                        aria-hidden
+                      >
+                        <Image
+                          src={format.logoSrc}
+                          alt=""
+                          width={26}
+                          height={18}
+                          className="h-4 w-auto max-w-[1.625rem] object-contain"
+                        />
+                      </span>
+                      <span className="reader-toc-label">{format.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

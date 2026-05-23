@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
+import { SampleContentFooter } from "@/components/layout/SampleContentFooter";
 import { Prose } from "@/components/marketing/Prose";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getItemBySlug, getPoemSlugs } from "@/lib/book/queries";
@@ -91,15 +92,7 @@ export default async function SiirPage({ params }: Props) {
           </p>
         )}
 
-        <footer className="mt-12 border-t border-stone-200 pt-8 text-sm text-stone-600">
-          <Link href="/ornekler" className="underline">
-            Diğer örnekler
-          </Link>
-          {" · "}
-          <Link href="/kitap" className="underline">
-            Kitap hakkında
-          </Link>
-        </footer>
+        <SampleContentFooter />
         </Container>
       </article>
     </>

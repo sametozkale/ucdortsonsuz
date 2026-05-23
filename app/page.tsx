@@ -35,22 +35,24 @@ export default async function HomePage() {
   return (
     <>
       <JsonLd data={bookJsonLd()} />
-      <LandingHero />
-      <LandingName
-        text={LANDING_WELCOME_PARAGRAPH}
-        ariaLabel="Okura karşılama"
-        variant="hero-follow"
-      />
-      <LandingAuthor quote={MOCK_AUTHOR_BOOK_QUOTE} />
-      <ShowcaseGrid slides={showcaseSlides} />
-      <LandingCharityPurchase />
-      <LandingDownloadStrip />
-      <LandingName
-        text={LANDING_NAME_PARAGRAPH}
-        ariaLabel="Kitaptan alıntı"
-        variant="pre-footer"
-      />
-      <LandingClosingCta />
+      <div className="landing-page">
+        <LandingHero />
+        <LandingName
+          text={LANDING_WELCOME_PARAGRAPH}
+          ariaLabel="Okura karşılama"
+          variant="hero-follow"
+        />
+        <LandingAuthor quote={MOCK_AUTHOR_BOOK_QUOTE} />
+        <ShowcaseGrid slides={showcaseSlides} />
+        <LandingCharityPurchase />
+        <LandingDownloadStrip />
+        <LandingName
+          text={LANDING_NAME_PARAGRAPH}
+          ariaLabel="Kitaptan alıntı"
+          variant="pre-footer"
+        />
+        <LandingClosingCta />
+      </div>
     </>
   );
 }

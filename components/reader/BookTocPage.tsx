@@ -83,23 +83,6 @@ function TocPageBody({
 }) {
   return (
     <div className="reader-toc-page font-sans text-[0.8125rem] leading-snug tracking-[-0.02em] text-reader-body sm:text-[0.875rem]">
-      {slice.frontMatter.length > 0 && (
-        <ul className="reader-toc-page-front" role="list">
-          {slice.frontMatter.map((entry) => (
-            <li key={entry.itemId}>
-              <button
-                type="button"
-                disabled={disabled || !onSelectItem}
-                onClick={() => onSelectItem?.(entry.itemId)}
-                className="reader-toc-page-link reader-toc-page-link--front"
-              >
-                {entry.title}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-
       {slice.showPoemsHeading && (
         <section className="reader-toc-page-section" aria-labelledby="toc-poems">
           <h3 id="toc-poems" className="reader-toc-page-heading">

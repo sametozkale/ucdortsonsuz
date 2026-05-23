@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
+import { SampleContentFooter } from "@/components/layout/SampleContentFooter";
 import { Prose } from "@/components/marketing/Prose";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getItemBySlug, getEssaySlugs } from "@/lib/book/queries";
@@ -89,6 +90,8 @@ export default async function DenemePage({ params }: Props) {
             </Link>
           </p>
         )}
+
+        <SampleContentFooter />
         </Container>
       </article>
     </>

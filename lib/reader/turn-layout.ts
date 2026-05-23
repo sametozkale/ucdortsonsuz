@@ -43,6 +43,61 @@ export function primaryPageIndexFromView(
   return Math.max(0, fallbackPage - 1);
 }
 
+/** Çift sayfada odak: sağdaki (son görünen) yaprak */
+export function activePageIndexFromView(
+  view: number[],
+  fallbackPage: number,
+): number {
+  const indices = visiblePageIndicesFromView(view);
+  if (indices.length > 0) return indices[indices.length - 1]!;
+  return Math.max(0, fallbackPage - 1);
+}
+
+function visibleAnchorIndices(
+  visibleIndices: number[],
+  currentIndex: number,
+): number[] {
+  return visibleIndices.length > 0 ? visibleIndices : [currentIndex];
+}
+
+/** Alt/üst gezinme: çift sayfada sağdaki (son görünen) sayfadan bir sonraki */
+export function readerIndexAfterNext(
+  visibleIndices: number[],
+  currentIndex: number,
+  pageCount: number,
+): number {
+  if (pageCount < 1) return 0;
+  const anchor = Math.max(...visibleAnchorIndices(visibleIndices, currentIndex));
+  return Math.min(anchor + 1, pageCount - 1);
+}
+
+/** Alt/üst gezinme: çift sayfada soldaki (ilk görünen) sayfadan bir önceki */
+export function readerIndexAfterPrev(
+  visibleIndices: number[],
+  currentIndex: number,
+): number {
+  const anchor = Math.min(...visibleAnchorIndices(visibleIndices, currentIndex));
+  return Math.max(anchor - 1, 0);
+}
+
+export function canGoReaderNext(
+  visibleIndices: number[],
+  currentIndex: number,
+  pageCount: number,
+): boolean {
+  if (pageCount < 2) return false;
+  const anchor = Math.max(...visibleAnchorIndices(visibleIndices, currentIndex));
+  return anchor < pageCount - 1;
+}
+
+export function canGoReaderPrev(
+  visibleIndices: number[],
+  currentIndex: number,
+): boolean {
+  const anchor = Math.min(...visibleAnchorIndices(visibleIndices, currentIndex));
+  return anchor > 0;
+}
+
 /** Görünür sayfalardan sonraki ilk sayfa (önizleme metni için) */
 export function nextPageAfterVisible(
   pages: { itemTitle: string }[],

@@ -10,12 +10,11 @@ export type CharityPartner = {
 
 /** Bağış paneli — yazar sesi (landing karşılama tonuyla uyumlu) */
 export const CHARITY_COPY = {
-  eyebrow: "Satın alırken",
-  title: "Paranın tamamı iki vakfa",
+  eyebrow: "Satın al, destek ol",
+  title: "Tüm geliri bağışlayacağım",
   intro:
-    "Üç Dört Sonsuz'dan düşen her kuruşu ikiye böldüm: toprak için TEMA Vakfı, çocuk için Darüşşafaka. Kelimeler bende kaldı; gerisi doğrudan onlara gider — siz okurken payı onlarla paylaşırsınız.",
+    "Uzun zamandır TEMA Vakfı ve Darüşşafaka'nın bağışçısıyım; bu iki kurumu tesadüfen değil, yıllardır taşıdığım gönül bağı yüzünden seçtim. Üç Dört Sonsuz'dan düşen her kuruş ikiye bölünüyor: toprak için TEMA, çocuk için Darüşşafaka. Kelimeler bende kaldı; gerisi doğrudan onlara gider — siz okurken payı onlarla paylaşırsınız.",
   ctaBuy: "Kitabı satın al",
-  ctaRead: "Önce oku",
 } as const;
 
 export const CHARITY_PARTNERS: CharityPartner[] = [

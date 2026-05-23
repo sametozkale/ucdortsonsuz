@@ -1,6 +1,8 @@
 import { ESSAY_TITLES, POEM_TITLES } from "@/lib/book/catalog";
+import { getEssayBody } from "@/lib/book/essay-bodies";
 import { getPoemBody } from "@/lib/book/poem-bodies";
 import {
+  AUTHOR_CONTACT_EMAIL,
   AUTHOR_NAME,
   BOOK_COVER_BG_URL,
   BOOK_DESCRIPTION,
@@ -59,6 +61,13 @@ export const MOCK_SECTIONS: BookSection[] = [
     title: "Denemeler",
     sort_order: 5,
   },
+  {
+    id: "sec-thanks",
+    book_id: BOOK_ID,
+    type: "back_matter",
+    title: "Teşekkürler",
+    sort_order: 6,
+  },
 ];
 
 const ONSOZ = `Bu kitap, sayıların ve sessizliğin arasında büyüyen bir yolculuğun kaydıdır.
@@ -70,14 +79,6 @@ const STORY = `**Üç Dört Sonsuz**'un doğuşu, bir defterin ortasından başl
 Yıllar süren notlar, gece yarısı yazılmış cümleler ve hiç gönderilmemiş mektuplar — hepsi bu kitapta bir araya geldi. Şiirler duygunun dilini, denemeler ise düşüncenin izini süer.
 
 Samet Özkale, bu metinlerde hem kişisel hem evrensel bir ses arar: kayıp, bellek, şehir, aile ve kelimelerin kendisi.`;
-
-function essayBody(n: number): string {
-  return `Deneme ${n}: Kelimelerin gölgesinde
-
-Yazmak, hatırlamanın başka bir biçimidir. Bu denemede yazar, çocukluğundan bugüne uzanan bir ipi takip eder; her paragraf bir durak, her cümle bir nefes.
-
-Okur burada şiirden farklı bir ritim bulur — düşüncenin açık yüzü.`;
-}
 
 function buildMockItems(): BookItem[] {
   const items: BookItem[] = [];
@@ -199,6 +200,11 @@ function buildMockItems(): BookItem[] {
     }
     usedEssaySlugs.add(slug);
 
+    const body = getEssayBody(slug);
+    if (!body) {
+      throw new Error(`Deneme metni eksik: ${title} (${slug})`);
+    }
+
     items.push({
       id: `item-essay-${i}`,
       book_id: BOOK_ID,
@@ -207,13 +213,39 @@ function buildMockItems(): BookItem[] {
       title,
       slug,
       excerpt: `${title} — Üç Dört Sonsuz kitabından bir deneme.`,
-      body_md: essayBody(i),
+      body_md: body,
       sort_order: order++,
       is_sample: i === 1,
       is_public_seo: true,
       page_breaks: null,
       section: MOCK_SECTIONS[4],
     });
+  });
+
+  items.push({
+    id: "item-thanks",
+    book_id: BOOK_ID,
+    section_id: "sec-thanks",
+    kind: "page",
+    title: "Teşekkürler",
+    slug: "tesekkurler",
+    excerpt: "Okura teşekkür ve iletişim bilgileri.",
+    body_md: [
+      `**Teşekkürler**`,
+      "",
+      AUTHOR_NAME,
+      "",
+      AUTHOR_CONTACT_EMAIL,
+      "",
+      `${BOOK_TITLE}'u okuduğunuz için teşekkür ederim.`,
+      "",
+      "Her zaman bana ulaşabilirsiniz.",
+    ].join("\n"),
+    sort_order: order++,
+    is_sample: false,
+    is_public_seo: false,
+    page_breaks: null,
+    section: MOCK_SECTIONS[5],
   });
 
   return items;

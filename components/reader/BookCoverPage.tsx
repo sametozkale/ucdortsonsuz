@@ -70,7 +70,7 @@ export function BookCoverPage({
       )}
       aria-label={`${page.itemTitle} kapak`}
     >
-      <div className="book-cover-bg pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="book-cover-bg pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
         <Image
           src={backgroundSrc}
           alt={BOOK_COVER_BG_ALT}
@@ -81,8 +81,8 @@ export function BookCoverPage({
         />
       </div>
 
-      <div className="book-cover-inner relative z-10 flex flex-1 flex-col items-center justify-center px-8 py-10 text-center sm:px-10 sm:py-12">
-        <h1 className="reader-content-title max-w-[14rem] text-[1.375rem] font-normal leading-tight text-white sm:max-w-[16rem] sm:text-2xl">
+      <div className="book-cover-inner relative z-10 flex flex-1 flex-col items-center justify-center overflow-hidden rounded-[inherit] px-8 py-10 text-center sm:px-10 sm:py-12">
+        <h1 className="reader-content-title whitespace-nowrap text-[1.375rem] font-normal leading-tight text-white sm:text-2xl">
           {page.itemTitle}
         </h1>
 

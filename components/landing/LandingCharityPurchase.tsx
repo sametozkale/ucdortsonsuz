@@ -94,9 +94,6 @@ export function LandingCharityPurchase() {
               <Link href="/satin-al" className="btn-primary">
                 {CHARITY_COPY.ctaBuy}
               </Link>
-              <Link href="/oku" className="btn-ghost">
-                {CHARITY_COPY.ctaRead}
-              </Link>
             </div>
           </div>
         </LandingReveal>

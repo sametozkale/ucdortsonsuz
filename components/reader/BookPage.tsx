@@ -23,6 +23,35 @@ interface BookPageProps {
   className?: string;
 }
 
+const ESSAY_SECTION_MARKER = /^[IVXLCDM]{1,8}$/i;
+
+/** Sayfalama \n\n ile uyumlu paragraflar — tek blokta boşluk yanılsaması olmasın */
+function EssayPageBody({ content }: { content: string }) {
+  const parts = content
+    .split(/\n\n+/)
+    .map((p) => p.trim().replace(/^\*\*|\*\*$/g, ""))
+    .filter(Boolean);
+  if (parts.length <= 1) {
+    return <p>{parts[0] ?? content}</p>;
+  }
+  return (
+    <>
+      {parts.map((part, index) =>
+        ESSAY_SECTION_MARKER.test(part) ? (
+          <p
+            key={index}
+            className="mb-2 font-normal text-reader-title tracking-[0.12em]"
+          >
+            {part}
+          </p>
+        ) : (
+          <p key={index}>{part}</p>
+        ),
+      )}
+    </>
+  );
+}
+
 export function BookPage({
   page,
   side = "front",
@@ -30,6 +59,12 @@ export function BookPage({
   className,
 }: BookPageProps) {
   const isFirstPageOfItem = page.pageIndex === 0;
+  const hideSectionEyebrow =
+    page.itemSlug === "onsoz" || page.itemSlug === "kitabin-hikayesi";
+  const isPoemOrEssay =
+    page.itemKind === "poem" || page.itemKind === "essay";
+  const sectionEyebrowClass =
+    "font-sans text-[9px] font-medium uppercase tracking-[0.2em] text-reader-body";
 
   if (side === "back") {
     return (
@@ -71,39 +106,52 @@ export function BookPage({
     >
       {isFirstPageOfItem ? (
         <header className="reader-divider-header mb-5 shrink-0 pb-4">
-          <p className="font-sans text-[9px] font-medium uppercase tracking-[0.2em] text-reader-body">
-            {page.sectionTitle}
-          </p>
-          <h2 className="reader-content-title mt-1.5 text-lg font-normal leading-snug text-reader-title sm:text-xl">
+          {!hideSectionEyebrow && (
+            <p className={sectionEyebrowClass}>{page.sectionTitle}</p>
+          )}
+          <h2
+            className={cn(
+              "reader-content-title text-lg font-normal leading-snug text-reader-title sm:text-xl",
+              !hideSectionEyebrow && "mt-1.5",
+            )}
+          >
             {page.itemTitle}
           </h2>
         </header>
+      ) : isPoemOrEssay ? (
+        <p className={cn(sectionEyebrowClass, "mb-3 shrink-0")}>
+          {page.itemTitle}
+        </p>
       ) : (
         <p className="reader-content-title mb-3 shrink-0 text-base text-reader-title">
           {page.itemTitle}
         </p>
       )}
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
+      <div className="min-h-0 flex-1 overflow-hidden">
         <div
           className={cn(
             "reader-content font-sans tracking-[-0.02em] text-reader-body",
             page.itemKind === "poem"
               ? "reader-content--poem text-[0.9375rem] sm:text-[0.975rem]"
-              : "text-[0.9375rem] leading-[1.72] sm:text-[0.975rem] sm:leading-[1.78]",
+              : "reader-content--essay text-[0.9375rem] leading-[1.72] sm:text-[0.975rem] sm:leading-[1.78]",
           )}
         >
           <Prose
             className={cn(
               "font-sans",
               page.itemKind === "poem"
-                ? "prose-p:text-reader-body prose-p:tracking-[-0.02em]"
+                ? "prose-p:my-0 prose-p:text-reader-body prose-p:leading-[1.32] prose-p:tracking-[-0.02em]"
                 : "prose-p:text-reader-body prose-p:leading-[1.72] prose-p:tracking-[-0.02em]",
               "prose-headings:font-normal prose-headings:text-reader-title",
               "prose-strong:text-reader-title prose-a:text-reader-title",
             )}
           >
-            {page.content}
+            {page.itemKind === "essay" ? (
+              <EssayPageBody content={page.content} />
+            ) : (
+              page.content
+            )}
           </Prose>
         </div>
       </div>

@@ -1,5 +1,6 @@
 export const SITE_NAME = "Üç Dört Sonsuz";
 export const AUTHOR_NAME = "Samet Özkale";
+export const AUTHOR_CONTACT_EMAIL = "ozkalesamet@gmail.com";
 export const BOOK_SLUG = "uc-dort-sonsuz";
 export const BOOK_TITLE = "Üç Dört Sonsuz";
 export const BOOK_DESCRIPTION =

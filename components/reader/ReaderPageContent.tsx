@@ -2,6 +2,7 @@
 
 import { BookCoverPage } from "@/components/reader/BookCoverPage";
 import { BookPage } from "@/components/reader/BookPage";
+import { BookThanksPage } from "@/components/reader/BookThanksPage";
 import type { ReaderPage } from "@/lib/book/types";
 import type { SpreadSide } from "@/lib/reader/turn-layout";
 
@@ -29,6 +30,12 @@ export function ReaderPageContent({
         spreadSide={spreadSide}
         className={className}
       />
+    );
+  }
+
+  if (page.itemSlug === "tesekkurler" && side === "front") {
+    return (
+      <BookThanksPage spreadSide={spreadSide} className={className} />
     );
   }
 

@@ -22,11 +22,8 @@ export function LandingDownloadStrip() {
           </h2>
           <p id="landing-download-desc" className="landing-download__intro">
             Üç Dört Sonsuz, ekranda okumak için özel bir düzenle hazırlandı — sakin
-            tipografi, sayfa çevirme ve kendi ritminizde ilerleme.{" "}
-            <Link href="/oku" className="text-link">
-              Tarayıcıda okuyun
-            </Link>
-            ; dilerseniz aşağıdaki biçimlerde cihazınıza indirin.
+            tipografi, sayfa çevirme ve kendi ritminizde ilerleme. Tarayıcıda
+            okuyun; dilerseniz aşağıdaki biçimlerde cihazınıza indirin.
           </p>
           <ul className="landing-download__list">
             {LANDING_DOWNLOAD_OPTIONS.map(

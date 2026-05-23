@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LandingReveal } from "@/components/landing/LandingReveal";
 import { Container } from "@/components/layout/Container";
+import { CLOSING_CTA_COPY } from "@/lib/landing/content";
 
 export function LandingClosingCta() {
   return (
@@ -9,18 +10,17 @@ export function LandingClosingCta() {
         <LandingReveal>
           <div className="landing-close__panel">
             <h2 className="landing-close__title font-serif">
-              Kitabı bugün alın, bu akşam okuyun.
+              {CLOSING_CTA_COPY.title}
             </h2>
             <p className="landing-close__text prose-width">
-              Tam metin dijital okuyucuda açılır. İsterseniz önce örnek şiirleri
-              okuyup karar verin — satın alma tek sayfada tamamlanır.
+              {CLOSING_CTA_COPY.text}
             </p>
             <div className="landing-close__actions">
               <Link href="/satin-al" className="btn-primary">
-                Satın al
+                {CLOSING_CTA_COPY.ctaBuy}
               </Link>
               <Link href="/kitap" className="btn-ghost">
-                Kitap hakkında
+                {CLOSING_CTA_COPY.ctaAbout}
               </Link>
             </div>
           </div>

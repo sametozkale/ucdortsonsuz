@@ -1,5 +1,3 @@
-import type JQuery from "jquery";
-
 declare global {
   interface JQuery {
     turn(options?: TurnJsOptions): JQuery;

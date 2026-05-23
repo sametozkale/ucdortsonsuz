@@ -1,13 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { Container } from "@/components/layout/Container";
-
-const nav = [
-  { href: "/kitap", label: "Kitap" },
-  { href: "/ornekler", label: "Örnekler" },
-  { href: "/hakkimda", label: "Hakkımda" },
-  { href: "/sss", label: "SSS" },
-];
+import { HEADER_CTA, HEADER_NAV } from "@/lib/site/navigation";
 
 export function Header() {
   return (
@@ -19,7 +13,7 @@ export function Header() {
           aria-label="Ana menü"
           className="hidden items-center gap-8 md:flex"
         >
-          {nav.map((item) => (
+          {HEADER_NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -28,8 +22,8 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Link href="/satin-al" className="btn-primary !min-h-9 !px-4 !text-xs">
-            Satın Al
+          <Link href={HEADER_CTA.href} className="btn-primary !min-h-9 !px-4 !text-xs">
+            {HEADER_CTA.label}
           </Link>
         </nav>
 

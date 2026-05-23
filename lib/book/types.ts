@@ -3,7 +3,8 @@ export type BookSectionType =
   | "toc"
   | "story"
   | "poems"
-  | "essays";
+  | "essays"
+  | "back_matter";
 
 export type BookItemKind = "poem" | "essay" | "page";
 
@@ -62,7 +63,6 @@ export interface TocPageEntry {
 
 export interface TocPageContent {
   showFullHeader: boolean;
-  frontMatter: TocPageEntry[];
   showPoemsHeading: boolean;
   poems: TocPageEntry[];
   showEssaysHeading: boolean;

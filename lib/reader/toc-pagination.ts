@@ -1,9 +1,11 @@
 import type { BookItem, TocPageContent, TocPageEntry } from "@/lib/book/types";
 
-/** İki sütunlu gridde bir sayfaya sığan yaklaşık satır sayısı (başlık hariç gövde) */
-const GRID_ROWS_PER_PAGE = 16;
-const FRONT_MATTER_ROW_COST = 2;
-const SECTION_HEADING_ROW_COST = 2;
+/** Tam başlık + “Şiirler” başlığı sonrası grid */
+const POEM_GRID_ROWS_FIRST_PAGE = 20;
+const POEM_GRID_ROWS_CONTINUATION_PAGE = 20;
+const SECTION_HEADING_ROW_COST = 1;
+/** Şiirlerden sonra denemeler bölümü arası */
+const SECTION_GAP_ROW_COST = 1;
 
 function entryFromItem(item: BookItem): TocPageEntry {
   return { title: item.title, itemId: item.id };
@@ -27,12 +29,6 @@ function takeGridSlice<T>(
 }
 
 export function buildTocPageSlices(items: BookItem[]): TocPageContent[] {
-  const onsoz = items.find((i) => i.slug === "onsoz");
-  const story = items.find((i) => i.slug === "kitabin-hikayesi");
-  const frontMatter: TocPageEntry[] = [];
-  if (onsoz) frontMatter.push(entryFromItem(onsoz));
-  if (story) frontMatter.push(entryFromItem(story));
-
   const poems = items
     .filter((i) => i.kind === "poem")
     .sort((a, b) => a.sort_order - b.sort_order)
@@ -49,49 +45,72 @@ export function buildTocPageSlices(items: BookItem[]): TocPageContent[] {
   let isFirst = true;
 
   while (poemIdx < poems.length || essayIdx < essays.length || isFirst) {
-    let rowsLeft = GRID_ROWS_PER_PAGE;
+    const pageIsFirst = isFirst;
     const page: TocPageContent = {
-      showFullHeader: isFirst,
-      frontMatter: [],
+      showFullHeader: pageIsFirst,
       showPoemsHeading: false,
       poems: [],
       showEssaysHeading: false,
       essays: [],
     };
 
-    if (isFirst && frontMatter.length > 0) {
-      page.frontMatter = frontMatter;
-      rowsLeft -= FRONT_MATTER_ROW_COST;
-      isFirst = false;
-    } else {
-      isFirst = false;
-    }
+    isFirst = false;
 
-    if (poemIdx < poems.length && rowsLeft > 0) {
-      if (poemIdx === 0) {
+    const poemsRemain = poemIdx < poems.length;
+    const essaysRemain = essayIdx < essays.length;
+    /** İlk yaprakta yalnızca şiirler; devam sayfasında kalan şiirler + denemeler */
+    const deferEssays = pageIsFirst && poemsRemain && essaysRemain;
+
+    let gridRowsLeft = 0;
+
+    if (poemsRemain) {
+      const needsPoemsHeading = poemIdx === 0;
+      if (needsPoemsHeading) {
         page.showPoemsHeading = true;
-        rowsLeft -= SECTION_HEADING_ROW_COST;
       }
-      const { slice, next } = takeGridSlice(poems, poemIdx, rowsLeft);
-      page.poems = slice;
-      poemIdx = next;
-      rowsLeft -= rowsForGridItems(slice.length);
+      gridRowsLeft = pageIsFirst
+        ? POEM_GRID_ROWS_FIRST_PAGE -
+          (needsPoemsHeading ? SECTION_HEADING_ROW_COST : 0)
+        : POEM_GRID_ROWS_CONTINUATION_PAGE -
+          (needsPoemsHeading ? SECTION_HEADING_ROW_COST : 0);
+
+      if (!pageIsFirst && poemsRemain && essaysRemain) {
+        const essayReserve =
+          rowsForGridItems(essays.length - essayIdx) +
+          SECTION_HEADING_ROW_COST +
+          SECTION_GAP_ROW_COST;
+        gridRowsLeft = Math.min(
+          gridRowsLeft,
+          Math.max(0, POEM_GRID_ROWS_CONTINUATION_PAGE - essayReserve),
+        );
+      }
+
+      if (gridRowsLeft > 0) {
+        const { slice, next } = takeGridSlice(poems, poemIdx, gridRowsLeft);
+        page.poems = slice;
+        poemIdx = next;
+        gridRowsLeft -= rowsForGridItems(slice.length);
+      }
     }
 
-    if (essayIdx < essays.length && rowsLeft > 0) {
+    const essayRowsLeft =
+      page.poems.length > 0 ? gridRowsLeft : POEM_GRID_ROWS_CONTINUATION_PAGE;
+
+    if (essaysRemain && essayRowsLeft > 0 && !deferEssays) {
+      let rowsLeft = essayRowsLeft;
       if (essayIdx === 0) {
         page.showEssaysHeading = true;
         rowsLeft -= SECTION_HEADING_ROW_COST;
+        if (page.poems.length > 0) {
+          rowsLeft -= SECTION_GAP_ROW_COST;
+        }
       }
       const { slice, next } = takeGridSlice(essays, essayIdx, rowsLeft);
       page.essays = slice;
       essayIdx = next;
     }
 
-    const hasContent =
-      page.frontMatter.length > 0 ||
-      page.poems.length > 0 ||
-      page.essays.length > 0;
+    const hasContent = page.poems.length > 0 || page.essays.length > 0;
 
     if (!hasContent) break;
     pages.push(page);
@@ -99,7 +118,17 @@ export function buildTocPageSlices(items: BookItem[]): TocPageContent[] {
     if (poemIdx >= poems.length && essayIdx >= essays.length) break;
   }
 
-  return pages.length ? pages : [{ showFullHeader: true, frontMatter: [], showPoemsHeading: false, poems: [], showEssaysHeading: false, essays: [] }];
+  return pages.length
+    ? pages
+    : [
+        {
+          showFullHeader: true,
+          showPoemsHeading: false,
+          poems: [],
+          showEssaysHeading: false,
+          essays: [],
+        },
+      ];
 }
 
 export function paginateTocItem(

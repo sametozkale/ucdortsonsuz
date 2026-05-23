@@ -97,6 +97,7 @@ export function ReaderTocMenu({
         {open && (
           <motion.div
             role="dialog"
+            aria-modal="true"
             aria-label="İçindekiler"
             initial={{ opacity: 0, y: 10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { ReaderDownloadMenu } from "@/components/reader/ReaderDownloadMenu";
 import { ReaderPageIndicator } from "@/components/reader/ReaderPageIndicator";
 import { ReaderTocMenu } from "@/components/reader/ReaderTocMenu";
+import { ReaderErrorBoundary } from "@/components/reader/ReaderErrorBoundary";
 import {
   TurnJsMagazine,
   type TurnJsMagazineHandle,
@@ -27,7 +28,6 @@ import {
   buildReaderPages,
   findPageIndexByItemId,
 } from "@/lib/reader/pagination";
-import { nextPageAfterVisible } from "@/lib/reader/turn-layout";
 
 interface BookReaderProps {
   book: Book;
@@ -44,9 +44,9 @@ export function BookReader({ book, items }: BookReaderProps) {
     [pages],
   );
   const [index, setIndex] = useState(0);
-  const [visibleIndices, setVisibleIndices] = useState<number[]>([0]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
   const [bookmark, setBookmark] = useState<Bookmark | null>(null);
   const [bookmarkNotice, setBookmarkNotice] = useState<string | null>(null);
   const [showResumeBanner, setShowResumeBanner] = useState(false);
@@ -55,10 +55,10 @@ export function BookReader({ book, items }: BookReaderProps) {
 
   const currentPage = pages[index];
 
-  const nextContentTitle = useMemo(
-    () => nextPageAfterVisible(pages, visibleIndices),
-    [pages, visibleIndices],
-  );
+  const nextContentTitle = useMemo(() => {
+    if (index + 1 >= pages.length) return null;
+    return pages[index + 1]?.itemTitle ?? null;
+  }, [pages, index]);
 
   const bookmarkPageIndex = useMemo(() => {
     if (!bookmark) return null;
@@ -98,15 +98,30 @@ export function BookReader({ book, items }: BookReaderProps) {
     [pages.length],
   );
 
+  const canGoPrev = index > 0;
+  const canGoNext = index < pages.length - 1;
+
   const goNext = useCallback(() => {
-    if (index >= pages.length - 1 || isAnimating) return;
-    turnRef.current?.next();
-  }, [index, isAnimating, pages.length]);
+    if (!canGoNext) return;
+    if (turnRef.current?.isAnimating()) return;
+    turnRef.current?.goTo(index + 1);
+  }, [index, canGoNext]);
 
   const goPrev = useCallback(() => {
-    if (index <= 0 || isAnimating) return;
-    turnRef.current?.previous();
-  }, [index, isAnimating]);
+    if (!canGoPrev) return;
+    if (turnRef.current?.isAnimating()) return;
+    turnRef.current?.goTo(index - 1);
+  }, [index, canGoPrev]);
+
+  useEffect(() => {
+    if (!isAnimating) return;
+    const timer = window.setTimeout(() => {
+      if (!turnRef.current?.isAnimating()) {
+        setIsAnimating(false);
+      }
+    }, 1200);
+    return () => window.clearTimeout(timer);
+  }, [isAnimating]);
 
   const goToItem = useCallback(
     (itemId: string) => {
@@ -152,6 +167,22 @@ export function BookReader({ book, items }: BookReaderProps) {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (tocOpen || downloadOpen) return;
+
+      const target = e.target;
+      if (target instanceof HTMLElement) {
+        if (target.closest('[role="dialog"]')) return;
+        const tag = target.tagName;
+        if (
+          tag === "INPUT" ||
+          tag === "TEXTAREA" ||
+          tag === "SELECT" ||
+          target.isContentEditable
+        ) {
+          return;
+        }
+      }
+
       if (e.key === "ArrowRight" || e.key === " ") {
         e.preventDefault();
         goNext();
@@ -162,15 +193,13 @@ export function BookReader({ book, items }: BookReaderProps) {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [goNext, goPrev]);
-
-  if (!currentPage) {
-    return (
-      <p className="p-8 text-center text-stone-500">Okunacak içerik bulunamadı.</p>
-    );
-  }
+  }, [goNext, goPrev, tocOpen, downloadOpen]);
 
   return (
+    <ReaderErrorBoundary>
+    {!currentPage ? (
+      <p className="p-8 text-center text-stone-500">Okunacak içerik bulunamadı.</p>
+    ) : (
     <div className="reader-canvas relative min-h-dvh w-full">
       <header className="reader-top-bar absolute inset-x-0 top-4 z-50 px-4 sm:top-6 sm:px-6">
         <div className="relative flex h-10 items-center sm:h-11">
@@ -182,10 +211,10 @@ export function BookReader({ book, items }: BookReaderProps) {
             >
               <Home className="h-5 w-5" strokeWidth={1.5} />
             </Link>
-            <ReaderDownloadMenu />
+            <ReaderDownloadMenu onOpenChange={setDownloadOpen} />
           </div>
 
-          <h1 className="reader-header-title pointer-events-none absolute top-0 right-12 bottom-0 left-[5.75rem] flex items-center justify-center truncate text-center font-sans text-xs font-medium leading-none text-reader-title sm:right-14 sm:left-28 sm:text-sm">
+          <h1 className="reader-header-title pointer-events-none absolute top-0 right-12 bottom-0 left-[5.75rem] flex items-center justify-center truncate text-center text-xs leading-none text-reader-title sm:right-14 sm:left-28 sm:text-sm">
             {book.title}
           </h1>
 
@@ -234,7 +263,7 @@ export function BookReader({ book, items }: BookReaderProps) {
         <button
           type="button"
           onClick={goNext}
-          disabled={isAnimating || index >= pages.length - 1}
+          disabled={isAnimating || !canGoNext}
           aria-label={
             nextContentTitle
               ? `Sonraki: ${nextContentTitle}`
@@ -242,7 +271,7 @@ export function BookReader({ book, items }: BookReaderProps) {
           }
           className={cn(
             "reader-corner-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:h-11 sm:w-11",
-            (index >= pages.length - 1 || isAnimating) && "opacity-40",
+            (!canGoNext || isAnimating) && "opacity-40",
           )}
         >
           <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
@@ -283,7 +312,6 @@ export function BookReader({ book, items }: BookReaderProps) {
           bookTitle={book.title}
           coverImageUrl={book.cover_image_url}
           onPageChange={setIndex}
-          onVisibleIndicesChange={setVisibleIndices}
           onAnimatingChange={setIsAnimating}
           onTocSelectItem={goToItem}
           interactionDisabled={isAnimating}
@@ -295,10 +323,12 @@ export function BookReader({ book, items }: BookReaderProps) {
         total={pages.length}
         onPrev={goPrev}
         onNext={goNext}
-        canGoPrev={index > 0}
-        canGoNext={index < pages.length - 1}
+        canGoPrev={canGoPrev}
+        canGoNext={canGoNext}
         disabled={isAnimating}
       />
     </div>
+    )}
+    </ReaderErrorBoundary>
   );
 }

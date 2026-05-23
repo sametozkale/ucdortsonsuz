@@ -1,54 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import type { ShowcaseCarousel } from "@/components/landing/useShowcaseCarousel";
 import type { ShowcaseSlide } from "@/lib/landing/showcase-excerpts";
-import { cn } from "@/lib/utils";
 
 interface ShowcaseSliderProps {
   slides: ShowcaseSlide[];
+  carousel: ShowcaseCarousel;
 }
 
-export function ShowcaseSlider({ slides }: ShowcaseSliderProps) {
-  const reduceMotion = useReducedMotion();
-  const [index, setIndex] = useState(0);
-  const count = slides.length;
+export function ShowcaseSlider({ slides, carousel }: ShowcaseSliderProps) {
+  const { slide, reduceMotion, count } = carousel;
 
-  const go = useCallback(
-    (next: number) => {
-      if (count === 0) return;
-      setIndex((next + count) % count);
-    },
-    [count],
-  );
-
-  const goPrev = useCallback(() => go(index - 1), [go, index]);
-  const goNext = useCallback(() => go(index + 1), [go, index]);
-
-  useEffect(() => {
-    if (count <= 1 || reduceMotion) return;
-
-    const timer = window.setInterval(() => {
-      setIndex((i) => (i + 1) % count);
-    }, 9000);
-
-    return () => window.clearInterval(timer);
-  }, [count, reduceMotion]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") goPrev();
-      if (e.key === "ArrowRight") goNext();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [goPrev, goNext]);
-
-  if (count === 0) return null;
-
-  const slide = slides[index];
+  if (count === 0 || !slide) return null;
 
   return (
     <div
@@ -82,47 +47,6 @@ export function ShowcaseSlider({ slides }: ShowcaseSliderProps) {
           </motion.div>
         </AnimatePresence>
       </div>
-
-      {count > 1 ? (
-        <div className="showcase-slider__controls">
-          <button
-            type="button"
-            className="showcase-slider__arrow"
-            onClick={goPrev}
-            aria-label="Önceki kesit"
-          >
-            <ChevronLeft className="size-5" aria-hidden />
-          </button>
-          <div
-            className="showcase-slider__dots"
-            role="tablist"
-            aria-label="Kesitler"
-          >
-            {slides.map((s, i) => (
-              <button
-                key={s.id}
-                type="button"
-                role="tab"
-                aria-selected={i === index}
-                aria-label={`${s.title} kesiti`}
-                className={cn(
-                  "showcase-slider__dot",
-                  i === index && "showcase-slider__dot--active",
-                )}
-                onClick={() => setIndex(i)}
-              />
-            ))}
-          </div>
-          <button
-            type="button"
-            className="showcase-slider__arrow"
-            onClick={goNext}
-            aria-label="Sonraki kesit"
-          >
-            <ChevronRight className="size-5" aria-hidden />
-          </button>
-        </div>
-      ) : null}
     </div>
   );
 }
