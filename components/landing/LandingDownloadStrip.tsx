@@ -7,6 +7,7 @@ import { LANDING_DOWNLOAD_OPTIONS } from "@/lib/landing/downloads";
 export function LandingDownloadStrip() {
   return (
     <section
+      id="indir"
       className="landing-download site-section"
       aria-labelledby="landing-download-title"
     >

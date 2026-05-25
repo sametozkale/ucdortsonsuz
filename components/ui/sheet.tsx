@@ -83,7 +83,7 @@ export function SheetContent({
         )}
       >
         <div className="flex items-center justify-between border-b border-stone-200 px-4 py-3">
-          <h2 className="font-serif text-lg font-semibold text-stone-900">
+          <h2 className="font-hero-title text-lg font-semibold text-stone-900">
             {title}
           </h2>
           <button

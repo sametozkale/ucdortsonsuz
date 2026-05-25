@@ -7,9 +7,7 @@
 - Ana sayfa: https://ucdortsonsuz.com/
 - Kitap: https://ucdortsonsuz.com/kitap
 - Yazar: https://ucdortsonsuz.com/hakkimda
-- Ücretsiz örnekler: https://ucdortsonsuz.com/ornekler
-- SSS: https://ucdortsonsuz.com/sss
-
+- Kitaptan örnekler: https://ucdortsonsuz.com/#kitaptan
 ## Yazar
 
 Samet Özkale — şiir ve deneme yazarı. Üç Dört Sonsuz ilk şiir kitabıdır.
@@ -25,4 +23,4 @@ Samet Özkale — şiir ve deneme yazarı. Üç Dört Sonsuz ilk şiir kitabıd�
 Şiirler: https://ucdortsonsuz.com/siir/{slug}
 Denemeler: https://ucdortsonsuz.com/deneme/{slug}
 
-Örnek tam metinler /ornekler sayfasında listelenir.
+Örnek tam metinler ana sayfadaki Kitaptan bölümünde ve /siir/{slug}, /deneme/{slug} URL'lerinde yer alır.

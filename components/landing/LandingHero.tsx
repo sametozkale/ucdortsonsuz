@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { PurchaseLink } from "@/components/marketing/PurchaseLink";
 import {
   useCallback,
   useEffect,
@@ -15,6 +16,8 @@ import {
   HERO_VIDEO_POSTER_URL,
   HERO_VIDEO_URL,
 } from "@/lib/constants";
+import { heroTitleFont } from "@/lib/fonts/hero-title";
+import { cn } from "@/lib/utils";
 
 /** px scroll → tam daralma (0–1) */
 const SCROLL_SHRINK_DISTANCE = 180;
@@ -147,14 +150,14 @@ export function LandingHero() {
           <header className="landing-hero-video__top">
             <Link
               href="/"
-              className="landing-hero-video__brand"
+              className={cn(heroTitleFont.className, "landing-hero-video__brand")}
               aria-label={`${BOOK_TITLE} — ana sayfa`}
             >
               {BOOK_TITLE}
             </Link>
-            <Link href="/satin-al" className="btn-primary landing-hero-video__buy">
+            <PurchaseLink className="btn-primary landing-hero-video__buy">
               Satın al
-            </Link>
+            </PurchaseLink>
           </header>
 
           <div className="landing-hero-video__bottom">

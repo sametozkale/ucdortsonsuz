@@ -31,7 +31,7 @@ export function ShowcaseSlider({ slides, carousel }: ShowcaseSliderProps) {
             exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
-            <blockquote className="showcase-slider__quote font-serif">
+            <blockquote className="showcase-slider__quote">
               <p>{slide.quote}</p>
             </blockquote>
             <footer className="showcase-slider__meta">

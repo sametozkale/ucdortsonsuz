@@ -11,7 +11,7 @@ export default function KullanimPage() {
   return (
     <article className="site-section">
       <Container>
-      <h1 className="font-serif text-3xl font-semibold text-stone-900">
+      <h1 className="font-hero-title text-3xl font-semibold text-stone-900">
         Kullanım Koşulları
       </h1>
       <p className="mt-6 leading-relaxed text-stone-700">

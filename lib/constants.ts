@@ -7,6 +7,13 @@ export const BOOK_DESCRIPTION =
   "Samet Özkale'nin 45 şiir ve 11 denemeden oluşan şiir kitabı. Dijital okuma, ücretsiz örnekler ve e-kitap indirme.";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://ucdortsonsuz.com";
+
+/** Stripe / iyzico vb. — tanımlıysa tüm Satın al CTA’ları buraya gider */
+export const BOOK_PURCHASE_URL =
+  process.env.NEXT_PUBLIC_BOOK_PURCHASE_URL?.trim() || "";
+
+/** Ödeme linki yokken geçici hedef */
+export const BOOK_PURCHASE_FALLBACK_HREF = "/#bagis";
 export const POEM_COUNT = 45;
 export const ESSAY_COUNT = 11;
 export const BOOKMARK_STORAGE_KEY = "ucdortsonsuz:bookmark";

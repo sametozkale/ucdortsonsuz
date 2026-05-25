@@ -1,15 +1,21 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import {
+  BOOK_PURCHASE_FALLBACK_HREF,
+  BOOK_PURCHASE_URL,
+} from "@/lib/constants";
 
-const protectedPaths = ["/indir"];
+function purchaseDestination(request: NextRequest): URL | string {
+  if (BOOK_PURCHASE_URL) return BOOK_PURCHASE_URL;
+  return new URL(BOOK_PURCHASE_FALLBACK_HREF, request.url);
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
   const isReader = pathname.startsWith("/oku");
 
-  if (!isProtected && !isReader) {
+  if (!isReader) {
     return NextResponse.next();
   }
 
@@ -21,8 +27,7 @@ export async function middleware(request: NextRequest) {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    if (isReader) return NextResponse.next();
-    return NextResponse.redirect(new URL("/satin-al", request.url));
+    return NextResponse.next();
   }
 
   let response = NextResponse.next({
@@ -51,18 +56,12 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (isReader && !user) {
-    const loginUrl = new URL("/satin-al", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  if (isProtected && !user) {
-    return NextResponse.redirect(new URL("/satin-al", request.url));
+    return NextResponse.redirect(purchaseDestination(request));
   }
 
   return response;
 }
 
 export const config = {
-  matcher: ["/oku/:path*", "/indir/:path*"],
+  matcher: ["/oku/:path*"],
 };

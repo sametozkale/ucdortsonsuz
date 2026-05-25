@@ -30,7 +30,7 @@ export function LandingAuthor({ quote }: LandingAuthorProps) {
             <h2 id="landing-author-title" className="landing-section-headline">
               {AUTHOR_NAME}
             </h2>
-            <blockquote className="landing-author__quote font-serif">
+            <blockquote className="landing-author__quote">
               {quote}
             </blockquote>
             <footer className="landing-author__cite">
