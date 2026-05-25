@@ -174,6 +174,12 @@ body {
   letter-spacing: -0.02em;
 }
 
+/** Libre Baskerville — hero başlık, sayfa adları, bölüm başlıkları */
+.font-hero-title {
+  font-family: var(--font-hero-title);
+  letter-spacing: -0.02em;
+}
+
 /* Layout */
 .site-container {
   width: min(100%, var(--container-content));
@@ -232,7 +238,7 @@ main:has(.landing-page) + footer .site-container {
 }
 
 .text-display {
-  font-family: var(--font-display);
+  font-family: var(--font-hero-title);
   font-size: clamp(2.25rem, 5vw, var(--text-display));
   line-height: var(--text-display-lh);
   font-weight: 600;
@@ -363,7 +369,7 @@ main:has(.landing-page) + footer .site-container {
 
 .landing-section-headline {
   margin-top: var(--space-3);
-  font-family: var(--font-display);
+  font-family: var(--font-hero-title);
   font-size: clamp(1.5rem, 4vw, var(--text-2xl));
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -467,6 +473,23 @@ main:has(.landing-page) + footer .site-container {
   gap: var(--space-4);
   padding-top: max(var(--hero-chrome-inset), env(safe-area-inset-top, 0px));
   padding-inline: var(--hero-chrome-x);
+}
+
+.site-brand-title {
+  font-family: var(--font-hero-title);
+  font-size: clamp(1.375rem, 3.5vw, 1.875rem);
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Üst menü: hero ölçeğinden küçük, nav ile dengeli */
+.site-brand-title--header {
+  font-size: 1.0625rem;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-synthesis-weight: none;
 }
 
 .landing-hero-video__brand {
@@ -679,6 +702,7 @@ main:has(.landing-page) + footer .site-container {
   margin: 0;
   padding: 0;
   border: none;
+  font-family: var(--font-hero-title);
   font-size: clamp(1.25rem, 3.5vw, 1.75rem);
   line-height: 1.55;
   font-style: italic;
@@ -954,6 +978,7 @@ main:has(.landing-page) + footer .site-container {
   margin: var(--space-6) 0 0;
   padding: 0;
   border: none;
+  font-family: var(--font-hero-title);
   font-size: clamp(1.125rem, 2.5vw, 1.375rem);
   line-height: 1.6;
   font-style: italic;
@@ -1201,6 +1226,7 @@ main:has(.landing-page) + footer .site-container {
 }
 
 .landing-close__title {
+  font-family: var(--font-hero-title);
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   line-height: 1.15;
   letter-spacing: -0.02em;

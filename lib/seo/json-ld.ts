@@ -1,4 +1,8 @@
 import {
+  AUTHOR_LINKEDIN_URL,
+  AUTHOR_WEBSITE_URL,
+} from "@/lib/author/about";
+import {
   AUTHOR_NAME,
   AUTHOR_PHOTO_SRC,
   BOOK_DESCRIPTION,
@@ -35,9 +39,16 @@ export function personJsonLd() {
     name: AUTHOR_NAME,
     url: `${SITE_URL}/hakkimda`,
     image: `${SITE_URL}${AUTHOR_PHOTO_SRC}`,
-    jobTitle: "Yazar",
-    description: `${BOOK_TITLE} kitabının yazarı.`,
-    knowsAbout: ["Türkçe şiir", "deneme", "edebiyat"],
+    jobTitle: "AI Product & Design Manager",
+    description: `${AUTHOR_NAME}, ${BOOK_TITLE} yazarı; AI product & design manager ve girişimci.`,
+    sameAs: [AUTHOR_WEBSITE_URL, AUTHOR_LINKEDIN_URL],
+    knowsAbout: [
+      "Türkçe şiir",
+      "deneme",
+      "ürün tasarımı",
+      "yapay zeka",
+      "SaaS",
+    ],
   };
 }
 

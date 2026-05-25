@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { PurchaseLink } from "@/components/marketing/PurchaseLink";
 import { useState } from "react";
 import { LandingReveal } from "@/components/landing/LandingReveal";
 import { Container } from "@/components/layout/Container";
@@ -91,9 +92,9 @@ export function LandingCharityPurchase() {
             </div>
 
             <div className="landing-charity__actions">
-              <Link href="/satin-al" className="btn-primary">
+              <PurchaseLink className="btn-primary">
                 {CHARITY_COPY.ctaBuy}
-              </Link>
+              </PurchaseLink>
             </div>
           </div>
         </LandingReveal>

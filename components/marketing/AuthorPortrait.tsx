@@ -2,6 +2,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type AuthorPortraitShape = "portrait" | "circle";
+type AuthorPortraitSize = "default" | "sm";
 
 interface AuthorPortraitProps {
   name: string;
@@ -9,13 +10,23 @@ interface AuthorPortraitProps {
   className?: string;
   priority?: boolean;
   shape?: AuthorPortraitShape;
+  /** Daire portre — `sm` Hakkımda vb. için */
+  size?: AuthorPortraitSize;
 }
 
+const circleSizeClasses: Record<AuthorPortraitSize, string> = {
+  default: "max-w-[12rem] sm:max-w-[14rem]",
+  sm: "max-w-[10rem] sm:max-w-[11.5rem]",
+};
+
+const circleImageSizes: Record<AuthorPortraitSize, string> = {
+  default: "(max-width: 768px) 12rem, 14rem",
+  sm: "(max-width: 768px) 10rem, 11.5rem",
+};
+
 const shapeClasses: Record<AuthorPortraitShape, string> = {
-  portrait:
-    "aspect-[4/5] max-w-[16rem] rounded-xl",
-  circle:
-    "aspect-square max-w-[12rem] rounded-full sm:max-w-[14rem]",
+  portrait: "aspect-[4/5] max-w-[16rem] rounded-xl",
+  circle: "aspect-square rounded-full",
 };
 
 export function AuthorPortrait({
@@ -24,10 +35,12 @@ export function AuthorPortrait({
   className,
   priority = false,
   shape = "circle",
+  size = "default",
 }: AuthorPortraitProps) {
   const frameClass = cn(
     "author-portrait w-full overflow-hidden border border-border",
     shapeClasses[shape],
+    shape === "circle" && circleSizeClasses[size],
     className,
   );
 
@@ -40,7 +53,7 @@ export function AuthorPortrait({
           fill
           sizes={
             shape === "circle"
-              ? "(max-width: 768px) 12rem, 14rem"
+              ? circleImageSizes[size]
               : "(max-width: 768px) 12rem, 16rem"
           }
           className="object-cover"

@@ -1,30 +1,38 @@
+import {
+  BOOK_PURCHASE_FALLBACK_HREF,
+  BOOK_PURCHASE_URL,
+} from "@/lib/constants";
+
 export type NavLink = {
   href: string;
   label: string;
+  external?: boolean;
 };
 
 /** Üst menü — Satın Al ayrı CTA */
 export const HEADER_NAV: NavLink[] = [
   { href: "/kitap", label: "Kitap" },
-  { href: "/ornekler", label: "Örnekler" },
   { href: "/hakkimda", label: "Hakkımda" },
-  { href: "/sss", label: "SSS" },
 ];
 
-export const HEADER_CTA: NavLink = {
-  href: "/satin-al",
+export const PURCHASE_CTA: NavLink = {
+  href: BOOK_PURCHASE_URL || BOOK_PURCHASE_FALLBACK_HREF,
   label: "Satın Al",
+  external: Boolean(BOOK_PURCHASE_URL),
 };
+
+/** @deprecated PURCHASE_CTA kullan */
+export const HEADER_CTA = PURCHASE_CTA;
 
 export const FOOTER_EXPLORE_LINKS: NavLink[] = [
   ...HEADER_NAV,
   { href: "/#bagis", label: "Bağış" },
-  HEADER_CTA,
+  PURCHASE_CTA,
 ];
 
 export const FOOTER_READ_LINKS: NavLink[] = [
   { href: "/oku", label: "Dijital okuyucu" },
-  { href: "/indir", label: "E-kitap indir" },
+  { href: "/#indir", label: "E-kitap indir" },
 ];
 
 export const FOOTER_LEGAL_LINKS: NavLink[] = [

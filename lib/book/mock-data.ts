@@ -253,18 +253,14 @@ function buildMockItems(): BookItem[] {
 
 export const MOCK_ITEMS = buildMockItems();
 
-export const MOCK_AUTHOR_BIO = `Samet Özkale, şiir ve düzyazı üzerine çalışan bir yazardır. **Üç Dört Sonsuz**, 45 şiir ve 11 denemeden oluşan ilk şiir kitabıdır.
-
-Yazılarında bellek, şehir, aile ve kelimelerin gölgesi öne çıkar. Türkçe edebiyatın çağdaş sesine katkı sunmayı hedefler.`;
+/** @deprecated Hakkımda içeriği lib/author/about.ts */
+export const MOCK_AUTHOR_BIO = `Samet Özkale, AI product & design manager, girişimci ve yazardır. Üç Dört Sonsuz (45 şiir, 11 deneme) ilk şiir kitabıdır. Detaylı biyografi: /hakkimda`;
 
 /** Yazarın kitap hakkındaki sözleri (biyografi / basın metninden). */
 export const MOCK_AUTHOR_BOOK_QUOTE = `Bu kitabı yıllarca kendimle taşıdım. Üç Dört Sonsuz'da ölüm ile sonsuzluk arasında kurduğum diyaloğu artık size bırakıyorum. Kırk beş şiirde bellek, on bir denemede kelimelerin gölgesi; hepsini sayfa çevirerek, kendi ritminizde okumanız için yazdım.`;
 
-export const MOCK_PRESS_RELEASE = `**Basın Bülteni — Üç Dört Sonsuz**
-
-Samet Özkale'nin yeni şiir kitabı *Üç Dört Sonsuz*, 45 şiir ve 11 denemeden oluşuyor. Kitap, sayılar ile sonsuzluk arasında kurulan şiirsel bir diyaloğu okura sunuyor.
-
-Dijital sürüm ucdortsonsuz.com üzerinden okunabilir ve satın alınabilir. Basın soruları için: info@ucdortsonsuz.com`;
+/** @deprecated Hakkımda içeriği lib/author/about.ts */
+export const MOCK_PRESS_RELEASE = `Üç Dört Sonsuz — 45 şiir, 11 deneme. Basın notu: /hakkimda`;
 
 export const MOCK_FAQ = [
   {
@@ -279,12 +275,12 @@ export const MOCK_FAQ = [
   {
     question: "Ücretsiz örnek metinler var mı?",
     answer:
-      "Evet. /ornekler sayfasında ücretsiz şiir ve deneme örneklerini tam metin olarak okuyabilirsiniz.",
+      "Evet. Ana sayfadaki Kitaptan bölümünde ve vitrinde seçili şiir ve denemeleri tam metin olarak okuyabilirsiniz.",
   },
   {
     question: "e-kitap formatlarında indirme mümkün mü?",
     answer:
-      "Satın alan okurlar PDF, EPUB ve Kindle uyumlu dosyaları /indir sayfasından indirebilir (Faz 2'de aktif).",
+      "Satın alan okurlar PDF, EPUB ve Kindle uyumlu dosyaları ana sayfadaki e-kitap bölümünden ve okuyucudaki indirme menüsünden alabilir (Faz 2'de aktif).",
   },
   {
     question: "Kitabın yazarı kimdir?",

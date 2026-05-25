@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/brand/LogoMark";
-import { SITE_NAME } from "@/lib/constants";
+import { LogoMarkProducter } from "@/components/brand/LogoMarkProducter";
+import { BOOK_TITLE, SITE_NAME } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
@@ -9,6 +10,8 @@ interface LogoProps {
   className?: string;
   markClassName?: string;
   showLabel?: boolean;
+  /** Hero başlığı gibi kitap adı (üst menü) */
+  variant?: "mark" | "title" | "producter";
 }
 
 export function Logo({
@@ -17,18 +20,26 @@ export function Logo({
   className,
   markClassName,
   showLabel = false,
+  variant = "mark",
 }: LogoProps) {
-  const content = (
-    <>
-      <LogoMark size={size} className={cn("text-ink", markClassName)} />
-      {showLabel && (
-        <span className="font-display text-lg font-semibold tracking-tight text-ink">
-          {SITE_NAME}
-        </span>
-      )}
-      <span className="sr-only">{SITE_NAME}</span>
-    </>
-  );
+  const content =
+    variant === "title" ? (
+      <span className="site-brand-title site-brand-title--header text-ink">
+        {BOOK_TITLE}
+      </span>
+    ) : variant === "producter" ? (
+      <LogoMarkProducter size={size} className={cn("text-ink", markClassName)} />
+    ) : (
+      <>
+        <LogoMark size={size} className={cn("text-ink", markClassName)} />
+        {showLabel && (
+          <span className="font-display text-lg font-semibold tracking-tight text-ink">
+            {SITE_NAME}
+          </span>
+        )}
+        <span className="sr-only">{SITE_NAME}</span>
+      </>
+    );
 
   const wrapperClass = cn(
     "inline-flex items-center gap-2.5 rounded-[var(--radius-xs)] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]",

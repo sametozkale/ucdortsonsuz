@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
+import { NavAnchor } from "@/components/layout/NavAnchor";
 import { Container } from "@/components/layout/Container";
 import { AUTHOR_NAME, ESSAY_COUNT, POEM_COUNT } from "@/lib/constants";
 import {
@@ -13,10 +13,11 @@ function FooterLinkList({ items }: { items: NavLink[] }) {
   return (
     <ul className="space-y-2 text-sm text-ink-secondary">
       {items.map((item) => (
-        <li key={item.href}>
-          <Link href={item.href} className="text-link !no-underline hover:underline">
-            {item.label}
-          </Link>
+        <li key={`${item.href}-${item.label}`}>
+          <NavAnchor
+            {...item}
+            className="text-link !no-underline hover:underline"
+          />
         </li>
       ))}
     </ul>
@@ -29,7 +30,7 @@ export function Footer() {
       <Container className="py-12 sm:py-16">
         <div className="grid gap-10 sm:grid-cols-2 sm:items-start">
           <div>
-            <Logo href="/" size="sm" markClassName="text-ink" />
+            <Logo href="/" size="sm" variant="producter" markClassName="text-ink" />
             <p className="mt-3 text-sm text-ink-secondary">
               {POEM_COUNT} şiir · {ESSAY_COUNT} deneme
             </p>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PurchaseLink } from "@/components/marketing/PurchaseLink";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { SampleContentFooter } from "@/components/layout/SampleContentFooter";
@@ -59,7 +60,7 @@ export default async function SiirPage({ params }: Props) {
               {AUTHOR_NAME}
             </Link>
           </p>
-          <h1 className="mt-2 font-serif text-4xl font-semibold text-stone-900">
+          <h1 className="mt-2 font-hero-title text-4xl font-semibold text-stone-900">
             {item.title}
           </h1>
         </header>
@@ -76,19 +77,16 @@ export default async function SiirPage({ params }: Props) {
 
         {showFullText && item.body_md ? (
           <section className="mt-10" aria-label="Tam metin">
-            <h2 className="font-serif text-xl text-stone-900">Tam metin</h2>
+            <h2 className="font-hero-title text-xl text-stone-900">Tam metin</h2>
             <div className="mt-4">
               <Prose>{item.body_md}</Prose>
             </div>
           </section>
         ) : (
           <p className="mt-10">
-            <Link
-              href="/satin-al"
-              className="font-medium text-stone-800 underline"
-            >
+            <PurchaseLink className="font-medium text-stone-800 underline">
               Kitabın tamamını okumak için satın alın →
-            </Link>
+            </PurchaseLink>
           </p>
         )}
 

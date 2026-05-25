@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PurchaseLink } from "@/components/marketing/PurchaseLink";
 import { Container } from "@/components/layout/Container";
 import { PageIntro } from "@/components/marketing/PageIntro";
 import { Prose } from "@/components/marketing/Prose";
@@ -46,7 +47,7 @@ export default async function KitapPage() {
         />
 
         <section className="mt-12" aria-labelledby="yapi">
-          <h2 id="yapi" className="font-display text-xl font-semibold text-ink">
+          <h2 id="yapi" className="font-hero-title text-xl font-semibold text-ink">
             Kitap yapısı
           </h2>
           <ul className="mt-4 list-inside list-disc space-y-2 text-ink-secondary">
@@ -58,7 +59,7 @@ export default async function KitapPage() {
 
         {story?.body_md && (
           <section className="mt-10" aria-labelledby="hikaye">
-            <h2 id="hikaye" className="font-display text-xl font-semibold text-ink">
+            <h2 id="hikaye" className="font-hero-title text-xl font-semibold text-ink">
               Kitabın hikayesi
             </h2>
             <div className="mt-4">
@@ -68,7 +69,7 @@ export default async function KitapPage() {
         )}
 
         <section className="mt-12" aria-labelledby="icindekiler">
-          <h2 id="icindekiler" className="font-display text-xl font-semibold text-ink">
+          <h2 id="icindekiler" className="font-hero-title text-xl font-semibold text-ink">
             İçindekiler
           </h2>
           <p className="mt-2 text-sm text-ink-secondary">
@@ -114,12 +115,7 @@ export default async function KitapPage() {
         </section>
 
         <p className="mt-12">
-          <Link
-            href="/satin-al"
-            className="btn-primary"
-          >
-            Kitabı satın al
-          </Link>
+          <PurchaseLink className="btn-primary">Kitabı satın al</PurchaseLink>
         </p>
         </Container>
       </article>

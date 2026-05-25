@@ -11,7 +11,7 @@ export default function GizlilikPage() {
   return (
     <article className="site-section prose prose-stone">
       <Container>
-      <h1 className="font-serif text-3xl font-semibold">Gizlilik Politikası</h1>
+      <h1 className="font-hero-title text-3xl font-semibold">Gizlilik Politikası</h1>
       <p className="mt-6 text-stone-700 leading-relaxed">
         Bu site, Samet Özkale&apos;nin Üç Dört Sonsuz kitabını tanıtmak ve
         dijital olarak sunmak amacıyla işletilmektedir. E-posta listesi
