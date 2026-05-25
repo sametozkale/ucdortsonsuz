@@ -12,7 +12,7 @@ export function Header() {
 
         <nav
           aria-label="Ana menü"
-          className="hidden items-center gap-8 md:flex"
+          className="hidden items-center gap-3 md:flex"
         >
           {HEADER_NAV.map((item) => (
             <Link

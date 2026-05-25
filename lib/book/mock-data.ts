@@ -74,7 +74,7 @@ const ONSOZ = `Bu kitap, sayıların ve sessizliğin arasında büyüyen bir yol
 
 Üç ile dört arasında kalan, sonsuzla konuşan her satır, okura bir kapı açmak için yazıldı.`;
 
-const STORY = `**Üç Dört Sonsuz**'un doğuşu, bir defterin ortasından başlar.
+const STORY = `Üç Dört Sonsuz'un doğuşu, bir defterin ortasından başlar.
 
 Yıllar süren notlar, gece yarısı yazılmış cümleler ve hiç gönderilmemiş mektuplar — hepsi bu kitapta bir araya geldi. Şiirler duygunun dilini, denemeler ise düşüncenin izini süer.
 

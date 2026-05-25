@@ -247,6 +247,17 @@ main:has(.landing-page) + footer .site-container {
   max-width: 24ch;
 }
 
+/* PageIntro: display → 3xl → 2xl (iki kademe küçük) */
+.text-page-title {
+  font-family: var(--font-hero-title);
+  font-size: clamp(1.75rem, 4vw, var(--text-2xl));
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  max-width: 24ch;
+}
+
 .prose-width {
   max-width: 65ch;
 }
@@ -483,9 +494,9 @@ main:has(.landing-page) + footer .site-container {
   letter-spacing: -0.02em;
 }
 
-/* Üst menü: hero ölçeğinden küçük, nav ile dengeli */
-.site-brand-title--header {
-  font-size: 1.0625rem;
+/* Üst menü */
+.site-brand-title.site-brand-title--header {
+  font-size: 18px;
   line-height: 1.25;
   font-weight: 600;
   letter-spacing: -0.015em;
