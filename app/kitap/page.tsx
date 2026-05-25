@@ -17,7 +17,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = pageMetadata({
   title: "Kitap",
-  description: `${BOOK_TITLE}: ${POEM_COUNT} şiir, ${ESSAY_COUNT} deneme. Kitabın hikayesi, yapısı ve içindekiler.`,
+  description: `${BOOK_TITLE}: ${POEM_COUNT} şiir, ${ESSAY_COUNT} deneme. Kitabın hikayesi ve içindekiler.`,
   path: "/kitap",
 });
 
@@ -43,19 +43,8 @@ export default async function KitapPage() {
         <PageIntro
           eyebrow={AUTHOR_NAME}
           title={BOOK_TITLE}
-          description={`${POEM_COUNT} şiir ve ${ESSAY_COUNT} deneme — yapı, hikaye ve içindekiler.`}
+          description={`${POEM_COUNT} şiir ve ${ESSAY_COUNT} deneme — hikaye ve içindekiler.`}
         />
-
-        <section className="mt-12" aria-labelledby="yapi">
-          <h2 id="yapi" className="font-hero-title text-xl font-semibold text-ink">
-            Kitap yapısı
-          </h2>
-          <ul className="mt-4 list-inside list-disc space-y-2 text-ink-secondary">
-            <li>Önsöz ve kitabın hikayesi</li>
-            <li>{POEM_COUNT} şiir</li>
-            <li>{ESSAY_COUNT} deneme</li>
-          </ul>
-        </section>
 
         {story?.body_md && (
           <section className="mt-10" aria-labelledby="hikaye">

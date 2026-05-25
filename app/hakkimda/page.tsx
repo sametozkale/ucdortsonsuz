@@ -72,7 +72,7 @@ export default function HakkimdaPage() {
           <section className="mt-12 max-w-2xl" aria-labelledby="basin">
             <h2
               id="basin"
-              className="font-hero-title text-2xl tracking-tight text-ink"
+              className="font-hero-title text-lg tracking-tight text-ink"
             >
               Basın notu
             </h2>
