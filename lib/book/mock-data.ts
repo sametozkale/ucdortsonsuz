@@ -258,7 +258,7 @@ export const MOCK_AUTHOR_BIO = `Samet Özkale, şiir ve düzyazı üzerine çal�
 Yazılarında bellek, şehir, aile ve kelimelerin gölgesi öne çıkar. Türkçe edebiyatın çağdaş sesine katkı sunmayı hedefler.`;
 
 /** Yazarın kitap hakkındaki sözleri (biyografi / basın metninden). */
-export const MOCK_AUTHOR_BOOK_QUOTE = `Üç Dört Sonsuz'da sayı ile sonsuzluk arasında kurduğum diyaloğu okura bırakmak istedim. Şiirler belleği, denemeler kelimelerin gölgesini taşıyor — her metin, kendi ritminde okunmak için yazıldı.`;
+export const MOCK_AUTHOR_BOOK_QUOTE = `Bu kitabı yıllarca kendimle taşıdım. Üç Dört Sonsuz'da ölüm ile sonsuzluk arasında kurduğum diyaloğu artık size bırakıyorum. Kırk beş şiirde bellek, on bir denemede kelimelerin gölgesi; hepsini sayfa çevirerek, kendi ritminizde okumanız için yazdım.`;
 
 export const MOCK_PRESS_RELEASE = `**Basın Bülteni — Üç Dört Sonsuz**
 

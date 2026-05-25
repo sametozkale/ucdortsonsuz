@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ShowcaseCarousel } from "@/components/landing/useShowcaseCarousel";
 import type { ShowcaseSlide } from "@/lib/landing/showcase-excerpts";
@@ -40,9 +39,6 @@ export function ShowcaseSlider({ slides, carousel }: ShowcaseSliderProps) {
                 <span className="showcase-slider__kind">{slide.kindLabel}</span>
                 <cite className="showcase-slider__title">{slide.title}</cite>
               </div>
-              <Link href={slide.href} className="showcase-slider__read text-link">
-                Metni oku →
-              </Link>
             </footer>
           </motion.div>
         </AnimatePresence>
