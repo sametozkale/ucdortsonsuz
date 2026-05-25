@@ -11,7 +11,46 @@ export type ShowcaseSlide = {
   kindLabel: string;
   href: string;
   quote: string;
+  /** Şiirlerde satır satır gösterim */
+  quoteLines?: string[];
 };
+
+/** Vitrin sırası — tüm öne çıkan kesitler */
+export const SHOWCASE_SLIDE_ORDER = [
+  "kitabin-hikayesi",
+  "zeytin-agaci",
+  "harman",
+  "kahverengi",
+  "el-alem",
+  "bir-kusak-geliyor",
+  "sessiz-camia",
+  "birden-bine",
+] as const;
+
+/** Kontrol çubuğunda görünen çizgi sayısı (kesit sayısından bağımsız) */
+export const SHOWCASE_DOT_COUNT = 3;
+
+export function showcaseDotIndex(slideIndex: number, slideCount: number): number {
+  if (slideCount <= 1) return 0;
+  if (slideCount <= SHOWCASE_DOT_COUNT) return slideIndex;
+  return Math.min(
+    SHOWCASE_DOT_COUNT - 1,
+    Math.floor((slideIndex / slideCount) * SHOWCASE_DOT_COUNT),
+  );
+}
+
+export function showcaseSlideIndexForDot(
+  dotIndex: number,
+  slideCount: number,
+): number {
+  if (slideCount <= SHOWCASE_DOT_COUNT) {
+    return Math.min(dotIndex, slideCount - 1);
+  }
+  return Math.min(
+    slideCount - 1,
+    Math.floor((dotIndex / SHOWCASE_DOT_COUNT) * slideCount),
+  );
+}
 
 /** Vitrin slider’ında öne çıkan, editoryal seçilmiş kesitler */
 const CURATED_QUOTES: Partial<Record<string, string>> = {
@@ -25,6 +64,12 @@ const CURATED_QUOTES: Partial<Record<string, string>> = {
     "Oysa yeşilin huzuru öyle kadimdir ki yeni bir keşfe tenezzül etmez. Bugün koşmak gerek maviden yeşile, yeşilden maviye.",
   "birden-bine":
     "Yazmak, hatırlamanın başka bir biçimidir. Okur burada şiirden farklı bir ritim bulur — düşüncenin açık yüzü.",
+  "el-alem":
+    "Bunca kalabalıklar içinde herkes kendi yalnızlığına esir. Anlayacağınız karmaşık ama aslında basit kesir — rüzgar olun ve her daim durmadan esin.",
+  "bir-kusak-geliyor":
+    "Bir kuşak geliyor, yarısı aç yarısı tok; yarısı az yarısı çok — sevinci az acısı bol, onurlu kedere kemer vurdu.",
+  "sessiz-camia":
+    "Ben karın kalkmadığı dağlar, atmosferin dünyaya duası. Ben şafak türküsü, sefalet çilesi — dillerde ölümün yası.",
 };
 
 function stripMarkdown(md: string): string {
@@ -69,23 +114,68 @@ function bodyForItem(slug: string, kind: BookItemKind): string | null {
   return null;
 }
 
-export function buildShowcaseSlides(items: BookItemPublic[]): ShowcaseSlide[] {
-  return items
-    .filter((item) => item.kind !== "page" || item.slug === "kitabin-hikayesi")
-    .map((item) => {
-      const body = bodyForItem(item.slug, item.kind);
-      const quote =
-        CURATED_QUOTES[item.slug] ??
-        (body ? quoteFromBody(body) : item.excerpt ?? item.title);
+const POEM_SHOWCASE_MAX_LINES = 5;
 
-      return {
-        id: item.id,
-        title: item.title,
-        slug: item.slug,
-        kind: item.kind,
-        kindLabel: sampleItemKindLabel(item.kind),
-        href: sampleItemHref(item),
-        quote,
-      };
-    });
+function poemShowcaseLines(slug: string, body: string | null): string[] {
+  const plain = body ? stripMarkdown(body) : "";
+  const fromBody = plain
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (fromBody.length > 0) {
+    const lines = fromBody.slice(0, POEM_SHOWCASE_MAX_LINES);
+    return lines.length > 1 ? lines.slice(0, -1) : lines;
+  }
+
+  const curated = CURATED_QUOTES[slug];
+  return curated ? [curated] : [];
+}
+
+function slideFromItem(item: BookItemPublic): ShowcaseSlide {
+  const body = bodyForItem(item.slug, item.kind);
+
+  if (item.kind === "poem") {
+    const quoteLines = poemShowcaseLines(item.slug, body);
+    return {
+      id: item.id,
+      title: item.title,
+      slug: item.slug,
+      kind: item.kind,
+      kindLabel: sampleItemKindLabel(item.kind),
+      href: sampleItemHref(item),
+      quote: quoteLines.join("\n"),
+      quoteLines,
+    };
+  }
+
+  const quote =
+    CURATED_QUOTES[item.slug] ??
+    (body ? quoteFromBody(body) : item.excerpt ?? item.title);
+
+  return {
+    id: item.id,
+    title: item.title,
+    slug: item.slug,
+    kind: item.kind,
+    kindLabel: sampleItemKindLabel(item.kind),
+    href: sampleItemHref(item),
+    quote,
+  };
+}
+
+export function buildShowcaseSlides(items: BookItemPublic[]): ShowcaseSlide[] {
+  const bySlug = new Map(
+    items
+      .filter((item) => item.kind !== "page" || item.slug === "kitabin-hikayesi")
+      .map((item) => [item.slug, slideFromItem(item)] as const),
+  );
+
+  const ordered = SHOWCASE_SLIDE_ORDER.map((slug) => bySlug.get(slug)).filter(
+    (slide): slide is ShowcaseSlide => slide != null,
+  );
+
+  if (ordered.length > 0) return ordered;
+
+  return [...bySlug.values()];
 }

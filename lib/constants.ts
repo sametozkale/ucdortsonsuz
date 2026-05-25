@@ -5,8 +5,27 @@ export const BOOK_SLUG = "uc-dort-sonsuz";
 export const BOOK_TITLE = "Üç Dört Sonsuz";
 export const BOOK_DESCRIPTION =
   "Samet Özkale'nin 45 şiir ve 11 denemeden oluşan şiir kitabı. Dijital okuma, ücretsiz örnekler ve e-kitap indirme.";
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://ucdortsonsuz.com";
+/** Canlı site — yasal metin, sitemap, OG, JSON-LD ve paylaşım linkleri */
+export const CANONICAL_SITE_URL = "https://ucdortsonsuz.com";
+
+function resolveSiteUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!raw) return CANONICAL_SITE_URL;
+
+  const normalized = raw.replace(/\/$/, "");
+  if (
+    /^https?:\/\/localhost(\b|:)/i.test(normalized) ||
+    /^https?:\/\/127\.0\.0\.1(\b|:)/i.test(normalized)
+  ) {
+    return CANONICAL_SITE_URL;
+  }
+
+  return normalized.startsWith("http")
+    ? normalized
+    : `https://${normalized}`;
+}
+
+export const SITE_URL = resolveSiteUrl();
 
 /** Stripe / iyzico vb. — tanımlıysa tüm Satın al CTA’ları buraya gider */
 export const BOOK_PURCHASE_URL =

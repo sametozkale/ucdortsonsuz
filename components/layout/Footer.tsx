@@ -6,6 +6,7 @@ import {
   FOOTER_EXPLORE_LINKS,
   FOOTER_LEGAL_LINKS,
   FOOTER_READ_LINKS,
+  FOOTER_SOCIAL_LINKS,
   type NavLink,
 } from "@/lib/site/navigation";
 
@@ -42,15 +43,22 @@ export function Footer() {
           </div>
 
           <div className="grid gap-10 sm:grid-cols-2 sm:items-stretch">
-            <nav aria-label="Gezinme">
-              <p className="eyebrow mb-3">Gezinme</p>
-              <FooterLinkList items={FOOTER_EXPLORE_LINKS} />
-            </nav>
+            <div className="flex flex-col gap-10">
+              <nav aria-label="Gezinme">
+                <p className="eyebrow mb-3">Gezinme</p>
+                <FooterLinkList items={FOOTER_EXPLORE_LINKS} />
+              </nav>
 
-            <div className="flex min-h-full flex-col justify-between gap-10">
               <nav aria-label="Okuma">
                 <p className="eyebrow mb-3">Okuma</p>
                 <FooterLinkList items={FOOTER_READ_LINKS} />
+              </nav>
+            </div>
+
+            <div className="flex min-h-full flex-col justify-between gap-10">
+              <nav aria-label="Sosyal">
+                <p className="eyebrow mb-3">Sosyal</p>
+                <FooterLinkList items={FOOTER_SOCIAL_LINKS} />
               </nav>
 
               <nav aria-label="Yasal">

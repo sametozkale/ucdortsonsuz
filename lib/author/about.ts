@@ -2,6 +2,8 @@
 
 export const AUTHOR_WEBSITE_URL = "https://www.samet.works/";
 export const AUTHOR_LINKEDIN_URL = "https://www.linkedin.com/in/sametozkale/";
+export const AUTHOR_INSTAGRAM_URL = "https://www.instagram.com/samet.ozkale/";
+export const AUTHOR_X_URL = "https://x.com/sametozkale";
 
 export const ABOUT_BODY = [
   "Gündüzleri ürün ve arayüz işlerine bakıyorum; Tallinn’de yaşıyorum, samet.works üzerinden kurucularla çalışıyorum. AI for Product Power bülteninde ürün, tasarım ve yapay zekâ üzerine yazıyorum — tanıdıysan muhtemelen oradan ya da LinkedIn’den.",

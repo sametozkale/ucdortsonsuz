@@ -177,7 +177,7 @@ function buildMockItems(): BookItem[] {
           : `${title} — Üç Dört Sonsuz kitabından bir şiir.`,
       body_md: body,
       sort_order: order++,
-      is_sample: i <= 3,
+      is_sample: i <= 6,
       is_public_seo: true,
       page_breaks: null,
       section: MOCK_SECTIONS[3],
@@ -257,7 +257,7 @@ export const MOCK_ITEMS = buildMockItems();
 export const MOCK_AUTHOR_BIO = `Samet Özkale, AI product & design manager, girişimci ve yazardır. Üç Dört Sonsuz (45 şiir, 11 deneme) ilk şiir kitabıdır. Detaylı biyografi: /hakkimda`;
 
 /** Yazarın kitap hakkındaki sözleri (biyografi / basın metninden). */
-export const MOCK_AUTHOR_BOOK_QUOTE = `Bu kitabı yıllarca kendimle taşıdım. Üç Dört Sonsuz'da ölüm ile sonsuzluk arasında kurduğum diyaloğu artık size bırakıyorum. Kırk beş şiirde bellek, on bir denemede kelimelerin gölgesi; hepsini sayfa çevirerek, kendi ritminizde okumanız için yazdım.`;
+export const MOCK_AUTHOR_BOOK_QUOTE = `Bu kitabı yıllarca kendimle taşıdım. Üç Dört Sonsuz'da ölüm ile sonsuzluk arasında kurduğum diyaloğu artık size bırakıyorum. Kırk beş şiirde bellek, on bir denemede kelimelerin gölgesi; hepsini sayfa sayfa çevirerek, kendi ritminizde okumanız için yazdım.`;
 
 /** @deprecated Hakkımda içeriği lib/author/about.ts */
 export const MOCK_PRESS_RELEASE = `Üç Dört Sonsuz — 45 şiir, 11 deneme. Basın notu: /hakkimda`;

@@ -19,18 +19,11 @@ export function ReaderDownloadMenu({ onOpenChange }: ReaderDownloadMenuProps) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  const setOpenTracked = useCallback(
-    (next: boolean | ((prev: boolean) => boolean)) => {
-      setOpen((prev) => {
-        const value = typeof next === "function" ? next(prev) : next;
-        onOpenChange?.(value);
-        return value;
-      });
-    },
-    [onOpenChange],
-  );
+  useEffect(() => {
+    onOpenChange?.(open);
+  }, [open, onOpenChange]);
 
-  const close = useCallback(() => setOpenTracked(false), [setOpenTracked]);
+  const close = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     if (!open) return;
@@ -56,15 +49,15 @@ export function ReaderDownloadMenu({ onOpenChange }: ReaderDownloadMenuProps) {
     <div
       ref={wrapRef}
       className="relative"
-      onMouseEnter={() => setOpenTracked(true)}
-      onMouseLeave={() => setOpenTracked(false)}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
     >
       <button
         type="button"
         aria-label="Kitabı indir"
         aria-expanded={open}
         aria-haspopup="dialog"
-        onClick={() => setOpenTracked((value) => !value)}
+        onClick={() => setOpen((value) => !value)}
         className={cn(
           "reader-corner-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:h-11 sm:w-11",
           open && "bg-surface-muted text-ink",

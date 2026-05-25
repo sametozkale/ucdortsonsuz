@@ -1,6 +1,8 @@
 import {
+  AUTHOR_INSTAGRAM_URL,
   AUTHOR_LINKEDIN_URL,
   AUTHOR_WEBSITE_URL,
+  AUTHOR_X_URL,
 } from "@/lib/author/about";
 import {
   AUTHOR_NAME,
@@ -63,7 +65,12 @@ export function personJsonLd() {
     url: `${SITE_URL}/hakkimda`,
     image: absoluteUrl(AUTHOR_PHOTO_SRC),
     description: `${AUTHOR_NAME}, ${BOOK_TITLE} yazarı. Şiir ve deneme kitabı; dijital okuma ve ücretsiz örnekler ucdortsonsuz.com'da.`,
-    sameAs: [AUTHOR_WEBSITE_URL, AUTHOR_LINKEDIN_URL],
+    sameAs: [
+      AUTHOR_WEBSITE_URL,
+      AUTHOR_LINKEDIN_URL,
+      AUTHOR_INSTAGRAM_URL,
+      AUTHOR_X_URL,
+    ],
     knowsAbout: [
       "Türkçe şiir",
       "deneme",

@@ -4,4 +4,4 @@ export const LANDING_NAME_PARAGRAPH =
 
 /** Scroll ile dolan paragraf — karşılama */
 export const LANDING_WELCOME_PARAGRAPH =
-  "Matematik bölümüne birinci olarak girmiş benin, kelimeleri formulize edemeyeşini üç dört beş üçgeninden ele alıp sonsuzluğa açmasını temel alan bu kitaba hoşgeldiniz.";
+  "Matematik bölümüne birinci olarak girmiş benin, kelimeleri formulize edemeyeşini üç dört beş üçgeninden ele alıp sonsuzluğa açmasını temel alan bu kitaba hoşgeldiniz";

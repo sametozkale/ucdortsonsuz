@@ -2,7 +2,12 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ShowcaseCarousel } from "@/components/landing/useShowcaseCarousel";
-import type { ShowcaseSlide } from "@/lib/landing/showcase-excerpts";
+import {
+  SHOWCASE_DOT_COUNT,
+  showcaseDotIndex,
+  showcaseSlideIndexForDot,
+  type ShowcaseSlide,
+} from "@/lib/landing/showcase-excerpts";
 import { cn } from "@/lib/utils";
 
 interface ShowcaseSliderControlsProps {
@@ -17,6 +22,7 @@ export function ShowcaseSliderControls({
   className,
 }: ShowcaseSliderControlsProps) {
   const { index, setIndex, count, goPrev, goNext } = carousel;
+  const activeDot = showcaseDotIndex(index, count);
 
   if (count <= 1) return null;
 
@@ -40,18 +46,18 @@ export function ShowcaseSliderControls({
         role="tablist"
         aria-label="Kesitler"
       >
-        {slides.map((s, i) => (
+        {Array.from({ length: SHOWCASE_DOT_COUNT }, (_, dot) => (
           <button
-            key={s.id}
+            key={dot}
             type="button"
             role="tab"
-            aria-selected={i === index}
-            aria-label={`${s.title} kesiti`}
+            aria-selected={dot === activeDot}
+            aria-label={`Kesit bölümü ${dot + 1} / ${SHOWCASE_DOT_COUNT}`}
             className={cn(
               "showcase-slider__dot",
-              i === index && "showcase-slider__dot--active",
+              dot === activeDot && "showcase-slider__dot--active",
             )}
-            onClick={() => setIndex(i)}
+            onClick={() => setIndex(showcaseSlideIndexForDot(dot, count))}
           />
         ))}
       </div>
