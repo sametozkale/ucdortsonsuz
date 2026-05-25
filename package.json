@@ -7,6 +7,8 @@
   },
   "scripts": {
     "dev": "next dev",
+    "generate:llms": "npx tsx scripts/generate-llms.ts",
+    "prebuild": "npm run generate:llms",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

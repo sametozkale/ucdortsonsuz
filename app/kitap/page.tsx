@@ -5,14 +5,14 @@ import { PageIntro } from "@/components/marketing/PageIntro";
 import { Prose } from "@/components/marketing/Prose";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBook, getItemsPublic } from "@/lib/book/queries";
-import { MOCK_ITEMS } from "@/lib/book/mock-data";
+import { MOCK_FAQ, MOCK_ITEMS } from "@/lib/book/mock-data";
 import {
   AUTHOR_NAME,
   BOOK_TITLE,
   ESSAY_COUNT,
   POEM_COUNT,
 } from "@/lib/constants";
-import { bookJsonLd, breadcrumbJsonLd } from "@/lib/seo/json-ld";
+import { bookJsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = pageMetadata({
@@ -38,6 +38,7 @@ export default async function KitapPage() {
           { name: "Kitap", path: "/kitap" },
         ])}
       />
+      <JsonLd data={faqJsonLd(MOCK_FAQ)} />
       <article className="site-section">
         <Container>
         <PageIntro

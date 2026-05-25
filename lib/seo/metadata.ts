@@ -1,7 +1,23 @@
 import type { Metadata } from "next";
 import { AUTHOR_NAME, SITE_NAME, SITE_URL } from "@/lib/constants";
+import {
+  DEFAULT_SITE_DESCRIPTION,
+  defaultOpenGraphImages,
+} from "@/lib/seo/site";
 
 const defaultTitle = `${SITE_NAME} — ${AUTHOR_NAME}`;
+
+const sharedOpenGraph = {
+  siteName: SITE_NAME,
+  locale: "tr_TR" as const,
+  images: [...defaultOpenGraphImages],
+};
+
+const sharedTwitter = {
+  card: "summary_large_image" as const,
+  creator: "@sametozkale",
+  images: [defaultOpenGraphImages[0].url],
+};
 
 export const baseMetadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -9,8 +25,7 @@ export const baseMetadata: Metadata = {
     default: defaultTitle,
     template: `%s | ${SITE_NAME} — ${AUTHOR_NAME}`,
   },
-  description:
-    "Samet Özkale'nin 45 şiir ve 11 denemeden oluşan şiir kitabı Üç Dört Sonsuz. Ücretsiz örnekler, dijital okuma ve e-kitap.",
+  description: DEFAULT_SITE_DESCRIPTION,
   keywords: [
     "Üç Dört Sonsuz",
     "Samet Özkale",
@@ -28,17 +43,17 @@ export const baseMetadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "tr_TR",
     url: SITE_URL,
-    siteName: SITE_NAME,
     title: defaultTitle,
     description:
       "45 şiir ve 11 deneme. Dijital okuma deneyimi ve ücretsiz örnekler.",
+    ...sharedOpenGraph,
   },
   twitter: {
-    card: "summary_large_image",
+    ...sharedTwitter,
     title: defaultTitle,
-    creator: "@sametozkale",
+    description:
+      "45 şiir ve 11 deneme. Dijital okuma deneyimi ve ücretsiz örnekler.",
   },
   robots: {
     index: true,
@@ -52,13 +67,17 @@ export function pageMetadata({
   description,
   path,
   noIndex = false,
+  openGraphType = "article",
 }: {
   title: string;
   description: string;
   path: string;
   noIndex?: boolean;
+  openGraphType?: "website" | "article";
 }): Metadata {
   const url = `${SITE_URL}${path}`;
+  const ogTitle = `${title} | ${SITE_NAME}`;
+
   return {
     title,
     description,
@@ -67,17 +86,19 @@ export function pageMetadata({
       languages: { "tr-TR": url },
     },
     openGraph: {
-      title: `${title} | ${SITE_NAME}`,
+      title: ogTitle,
       description,
       url,
-      locale: "tr_TR",
-      type: "article",
+      type: openGraphType,
+      ...sharedOpenGraph,
     },
     twitter: {
-      card: "summary_large_image",
-      title: `${title} | ${SITE_NAME}`,
+      ...sharedTwitter,
+      title: ogTitle,
       description,
     },
-    robots: noIndex ? { index: false, follow: false } : undefined,
+    robots: noIndex
+      ? { index: false, follow: true, googleBot: { index: false, follow: true } }
+      : undefined,
   };
 }

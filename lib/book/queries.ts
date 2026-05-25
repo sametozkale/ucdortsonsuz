@@ -128,13 +128,17 @@ export async function getSampleItems(): Promise<BookItemPublic[]> {
 export async function getPoemSlugs(): Promise<string[]> {
   const book = await getBook();
   const items = await getItemsPublic(book.id);
-  return items.filter((i) => i.kind === "poem").map((i) => i.slug);
+  return items
+    .filter((i) => i.kind === "poem" && i.is_public_seo)
+    .map((i) => i.slug);
 }
 
 export async function getEssaySlugs(): Promise<string[]> {
   const book = await getBook();
   const items = await getItemsPublic(book.id);
-  return items.filter((i) => i.kind === "essay").map((i) => i.slug);
+  return items
+    .filter((i) => i.kind === "essay" && i.is_public_seo)
+    .map((i) => i.slug);
 }
 
 function toPublicItem(item: BookItem): BookItemPublic {

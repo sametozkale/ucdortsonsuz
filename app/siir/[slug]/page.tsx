@@ -8,6 +8,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { getItemBySlug, getPoemSlugs } from "@/lib/book/queries";
 import { AUTHOR_NAME, BOOK_TITLE } from "@/lib/constants";
 import { breadcrumbJsonLd, creativeWorkJsonLd } from "@/lib/seo/json-ld";
+import { creativeWorkMetaDescription } from "@/lib/seo/descriptions";
 import { pageMetadata } from "@/lib/seo/metadata";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -23,9 +24,7 @@ export async function generateMetadata({ params }: Props) {
   if (!item) return {};
   return pageMetadata({
     title: item.title,
-    description:
-      item.excerpt ??
-      `${item.title} — ${BOOK_TITLE} kitabından bir şiir, ${AUTHOR_NAME}.`,
+    description: creativeWorkMetaDescription(item),
     path: `/siir/${slug}`,
   });
 }

@@ -43,6 +43,7 @@ export default function RootLayout({
     >
       <head>
         <JsonLd data={websiteJsonLd()} />
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM site guide" />
         <meta name="theme-color" content="#fafaf7" />
       </head>
       <body className="flex min-h-full flex-col font-sans">

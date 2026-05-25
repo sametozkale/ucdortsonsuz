@@ -26,6 +26,7 @@ export const metadata = pageMetadata({
   title: SITE_NAME,
   description: `${AUTHOR_NAME}'nin ${POEM_COUNT} şiir ve ${ESSAY_COUNT} denemeden oluşan şiir kitabı. Ücretsiz örnekler ve dijital okuma.`,
   path: "/",
+  openGraphType: "website",
 });
 
 export default async function HomePage() {

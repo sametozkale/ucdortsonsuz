@@ -35,6 +35,7 @@ export default function HakkimdaPage() {
               name={AUTHOR_NAME}
               src={AUTHOR_PHOTO_SRC}
               size="sm"
+              priority
               className="shrink-0"
             />
             <div className="min-w-0">

@@ -1,26 +1,24 @@
-# Üç Dört Sonsuz — ucdortsonsuz.com
+# Üç Dört Sonsuz
 
-> Samet Özkale'nin 45 şiir ve 11 denemeden oluşan Türkçe şiir kitabı.
+> Samet Özkale'nin 45 şiir ve 11 denemeden oluşan Türkçe dijital şiir kitabı; ücretsiz örnekler, dijital okuyucu ve satış gelirinin tamamının TEMA ile Darüşşafaka'ya bağışlanması.
 
-## Site
+## Ana sayfalar
 
-- Ana sayfa: https://ucdortsonsuz.com/
-- Kitap: https://ucdortsonsuz.com/kitap
-- Yazar: https://ucdortsonsuz.com/hakkimda
-- Kitaptan örnekler: https://ucdortsonsuz.com/#kitaptan
-## Yazar
+- [Ana sayfa](https://ucdortsonsuz.com/): Kitap tanıtımı, örnek vitrin, bağış ve e-kitap bölümleri.
+- [Kitap](https://ucdortsonsuz.com/kitap): Kitabın hikayesi, içindekiler ve sık sorulan sorular.
+- [Hakkımda](https://ucdortsonsuz.com/hakkimda): Yazar biyografisi ve basın notu.
 
-Samet Özkale — şiir ve deneme yazarı. Üç Dört Sonsuz ilk şiir kitabıdır.
+## Örnek içerik
 
-## İçerik
+- [Kitaptan örnekler](https://ucdortsonsuz.com/#kitaptan): Ücretsiz tam metin şiir ve denemeler.
+- [Zeytin Ağacı (şiir)](https://ucdortsonsuz.com/siir/zeytin-agaci): Örnek şiir — tam metin.
+- [Birden Bine (deneme)](https://ucdortsonsuz.com/deneme/birden-bine): Örnek deneme — tam metin.
 
-- 45 şiir
-- 11 deneme
-- Önsöz, kitabın hikayesi, içindekiler
+## Yasal
 
-## Keşif URL'leri
+- [Gizlilik](https://ucdortsonsuz.com/gizlilik): KVKK ve gizlilik politikası.
+- [Kullanım](https://ucdortsonsuz.com/kullanim): Site kullanım koşulları.
 
-Şiirler: https://ucdortsonsuz.com/siir/{slug}
-Denemeler: https://ucdortsonsuz.com/deneme/{slug}
+## Optional
 
-Örnek tam metinler ana sayfadaki Kitaptan bölümünde ve /siir/{slug}, /deneme/{slug} URL'lerinde yer alır.
+- [llms-full.txt](https://ucdortsonsuz.com/llms-full.txt): Genişletilmiş site özeti, örnek slug listesi ve SSS.
